@@ -8,7 +8,7 @@ const fiddleware = require('fiddleware');
 const fs = require('fs');
 const glob = require('glob');
 const initializeSwagger = require('swagger-tools').initializeMiddleware;
-const ioc = require('somersault');
+const iocMiddleware = require('./middleware/ioc');
 const mkdirp = require('mkdirp');
 const path = require('path');
 const query = require('connect-query');
@@ -17,7 +17,7 @@ const templates = require('swagger-template-es6-server');
 
 function startSkeletonApplication(options) {
   const app = connect();
-  const rootContainer = ioc.createContainer();
+  const ioc = iocMiddleware();
 
   // Process service registrations
   if (options.autoRegister) {
@@ -29,7 +29,7 @@ function startSkeletonApplication(options) {
           const qualifiedPath = path.join(options.cwd, moduleName);
           const loaded = require(qualifiedPath);
           if (loaded.tags) {
-            rootContainer.register(loaded.tags, loaded);
+            ioc.rootContainer.register(loaded.tags, loaded);
           } else {
             const baseName = path.basename(moduleName);
             const parsed = path.parse(moduleName);
@@ -46,7 +46,7 @@ function startSkeletonApplication(options) {
             }
 
             const normalized = segments.join('');
-            rootContainer.register(normalized, loaded);
+            ioc.rootContainer.register(normalized, loaded);
           }
         }
       });
@@ -69,29 +69,16 @@ function startSkeletonApplication(options) {
   codegen(codegenSettings);
 
   initializeSwagger(options.swagger, (middleware) => {
-    // Common middleware
     app.use(query());
+    app.use(ioc.middleware);
+
+    // Swagger-tools middleware
     app.use(fiddleware.respondJson());
     app.use(middleware.swaggerMetadata());
     app.use(middleware.swaggerValidator());
-
-    // Register the ioc 'resolver' function on the request.
-    // This is used by the generated controllers to handle
-    // dependency injection.
-    app.use((req, res, next) => {
-      const requestContainer = rootContainer.createChild();
-      requestContainer.register(['req', 'request'], req);
-      requestContainer.register(['res', 'response'], res);
-      req.resolver = (x) => requestContainer.build(x);
-      next();
-    });
-
-    // Load the generated controllers and start serving the routes
     app.use(middleware.swaggerRouter({
       controllers: path.join(outputDirectory, 'controllers'),
     }));
-
-    // Run the swagger UI
     app.use(middleware.swaggerUi());
 
     /* istanbul ignore next - Don't bother covering this code */
