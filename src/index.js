@@ -14,6 +14,7 @@ const path = require('path');
 const query = require('connect-query');
 const temp = require('temp').track();
 const templates = require('swagger-template-es6-server');
+const yamljs = require('yamljs');
 
 function startSkeletonApplication(options) {
   const app = connect();
@@ -52,6 +53,10 @@ function startSkeletonApplication(options) {
       });
   }
 
+  // If the swagger input is a string, then load it as a filename
+  const swagger = typeof options.swagger === 'string' ?
+    yamljs.load(options.swagger) : options.swagger;
+
   const outputDirectory = options.tempDir;
 
   const codegenSettings = defaults(templates({
@@ -63,12 +68,12 @@ function startSkeletonApplication(options) {
       mkdirp.sync(parsed.dir);
       fs.writeFileSync(fullName, content);
     },
-    swagger: JSON.parse(JSON.stringify(options.swagger)), // Clone to avoid issues
+    swagger: JSON.parse(JSON.stringify(swagger)), // Clone to avoid issues
   });
 
   codegen(codegenSettings);
 
-  initializeSwagger(options.swagger, (middleware) => {
+  initializeSwagger(swagger, (middleware) => {
     app.use(query());
     app.use(ioc.middleware);
 

@@ -35,7 +35,8 @@
     "swagger-codegen": "^0.1.1",
     "swagger-template-es6-server": "0.0.2",
     "swagger-tools": "^0.10.1",
-    "temp": "^0.8.3"
+    "temp": "^0.8.3",
+    "yamljs": "^0.2.7"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
