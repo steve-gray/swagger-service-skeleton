@@ -1,0 +1,43 @@
+{
+  "name": "swagger-service-skeleton",
+  "version": "0.0.1",
+  "description": "Rapid service-skeleton/prototyping solution for NodeJS/Swagger based Microservices.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/steve-gray/swagger-service-skeleton.git"
+  },
+  "keywords": [
+    "swagger",
+    "microservice",
+    "skeleton",
+    "template",
+    "codegen"
+  ],
+  "author": "Steve Gray",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/steve-gray/swagger-service-skeleton/issues"
+  },
+  "homepage": "https://github.com/steve-gray/swagger-service-skeleton#readme",
+  "dependencies": {
+    "app-root-path": "^1.0.0",
+    "connect": "^3.4.1",
+    "connect-query": "^0.2.0",
+    "defaults-deep": "^0.2.3",
+    "fiddleware": "0.0.2",
+    "glob": "^7.0.3",
+    "mkdirp": "^0.5.1",
+    "somersault": "^1.0.0",
+    "swagger-codegen": "^0.1.1",
+    "swagger-template-es6-server": "0.0.2",
+    "swagger-tools": "^0.10.1",
+    "temp": "^0.8.3"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  }
+}
