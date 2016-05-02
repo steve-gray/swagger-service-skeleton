@@ -12,6 +12,7 @@ const iocMiddleware = require('./middleware/ioc');
 const mkdirp = require('mkdirp');
 const path = require('path');
 const query = require('connect-query');
+const redirect = require('connect-redirection');
 const temp = require('temp').track();
 const templates = require('swagger-template-es6-server');
 const yamljs = require('yamljs');
@@ -75,6 +76,7 @@ function startSkeletonApplication(options) {
 
   initializeSwagger(swagger, (middleware) => {
     app.use(query());
+    app.use(redirect());
     app.use(ioc.middleware);
 
     // Swagger-tools middleware
@@ -94,12 +96,23 @@ function startSkeletonApplication(options) {
       next();
     });
 
+    /* Redirect to /docs */
+    app.use((req, res, next) => {
+      if (req.url === '/') {
+        res.redirect('/docs');
+      } else {
+        next();
+      }
+    });
+
     const server = app.listen(options.listenPort);
     app.close = function closeServer() {
       server.close();
       temp.cleanupSync();
     };
   });
+
+  return app;
 }
 
 module.exports = startSkeletonApplication;

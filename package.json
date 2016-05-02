@@ -27,6 +27,7 @@
     "app-root-path": "^1.0.0",
     "connect": "^3.4.1",
     "connect-query": "^0.2.0",
+    "connect-redirection": "0.0.1",
     "defaults-deep": "^0.2.3",
     "fiddleware": "0.0.2",
     "glob": "^7.0.3",
