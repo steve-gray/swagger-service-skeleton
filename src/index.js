@@ -87,6 +87,7 @@ function startSkeletonApplication(options) {
     app.use(query());                                    // Query-string parsing
     app.use(fiddleware.respondJson());                   // res.json(data, status) support.
     app.use(ioc.middleware);                             // Somersault IoC for controllers.
+    app.use(cors());                                     // Cross-origin
 
     // Swagger-tools middleware
     app.use(middleware.swaggerMetadata());
@@ -105,7 +106,6 @@ function startSkeletonApplication(options) {
     const server = app.listen(configWithDefaults.service.listenPort);
     app.close = function closeServer() {
       server.close();
-      temp.cleanupSync();
     };
   });
 
