@@ -9,16 +9,11 @@ const mkdirp = require('mkdirp');
 const path = require('path');
 
 const query = require('connect-query');
-<<<<<<< HEAD
 const fiddleware = require('fiddleware');
 const initializeSwagger = require('swagger-tools').initializeMiddleware;
 const errorHandler = require('./middleware/error-handler');
 const iocMiddleware = require('./middleware/ioc');
 const redirect = require('./middleware/redirect-handler');
-=======
-const redirect = require('connect-redirection');
-const temp = require('temp').track();
->>>>>>> ff38d95e6980ce3493c9c45fd8906232ba7c6227
 const templates = require('swagger-template-es6-server');
 const yamljs = require('yamljs');
 
