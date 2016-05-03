@@ -26,6 +26,7 @@
   "dependencies": {
     "connect": "^3.4.1",
     "connect-query": "^0.2.0",
+    "cors": "^2.7.1",
     "debug": "^2.2.0",
     "defaults-deep": "^0.2.3",
     "fiddleware": "0.0.2",
