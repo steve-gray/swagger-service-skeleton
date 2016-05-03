@@ -1,7 +1,6 @@
 'use strict';
 
 const debug = require('debug')('swagger-service-skeleton:redirect-handler');
-const redirect = require('connect-redirect');
 
 module.exports = (redirectMap) =>
   (req, res, next) => {
