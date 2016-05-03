@@ -2,6 +2,7 @@
 
 const codegen = require('swagger-codegen');
 const connect = require('connect');
+const cors = require('cors');
 const debug = require('debug')('swagger-service-skeleton');
 const defaults = require('defaults-deep');
 const fs = require('fs');
