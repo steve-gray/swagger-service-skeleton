@@ -9,8 +9,7 @@
 ![Stats]( https://nodei.co/npm/swagger-service-skeleton.png?downloads=true&downloadRank=true&stars=true)
 ![Downloads](https://nodei.co/npm-dl/swagger-service-skeleton.png?height=2)
 
-NPM package for rapidly spinning up REST service skeletons. Project is currently
-in early beta.
+NPM package for rapidly spinning up REST service skeletons. 
 
 ## Minimal Example
 The example below shows the minimal, happy-path configuration:
