@@ -2,18 +2,17 @@
 
 const codegen = require('swagger-codegen');
 const connect = require('connect');
+const connectIoc = require('connect-ioc');
 const cors = require('cors');
 const debug = require('debug')('swagger-service-skeleton');
 const defaults = require('defaults-deep');
+const fiddleware = require('fiddleware');
 const fs = require('fs');
+const initializeSwagger = require('swagger-tools').initializeMiddleware;
 const mkdirp = require('mkdirp');
 const path = require('path');
-
 const query = require('connect-query');
-const fiddleware = require('fiddleware');
-const initializeSwagger = require('swagger-tools').initializeMiddleware;
 const errorHandler = require('./middleware/error-handler');
-const iocMiddleware = require('./middleware/ioc');
 const redirect = require('./middleware/redirect-handler');
 const templates = require('swagger-template-es6-server');
 const yamljs = require('yamljs');
@@ -75,7 +74,7 @@ function startSkeletonApplication(options) {
 
   // Create service instances
   const app = connect();
-  const ioc = iocMiddleware(configWithDefaults.ioc);
+  const ioc = connectIoc(configWithDefaults.ioc);
 
   // Generate custom application code
   generateApplicationCode(
@@ -100,8 +99,8 @@ function startSkeletonApplication(options) {
     app.use(middleware.swaggerUi());
 
     // Post-request handling middleware
-    app.use(redirect(configWithDefaults.redirects));    // Redirect / to /docs
-    app.use(errorHandler());                             // When there's an exception.
+    app.use(redirect(configWithDefaults.redirects));      // Redirect / to /docs
+    app.use(errorHandler());                              // When there's an exception.
 
     const server = app.listen(configWithDefaults.service.listenPort);
     app.close = function closeServer() {

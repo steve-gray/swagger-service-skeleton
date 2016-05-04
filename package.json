@@ -1,6 +1,6 @@
 {
   "name": "swagger-service-skeleton",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Rapid service-skeleton/prototyping solution for NodeJS/Swagger based Microservices.",
   "main": "src/index.js",
   "scripts": {
@@ -25,6 +25,7 @@
   "homepage": "https://github.com/steve-gray/swagger-service-skeleton#readme",
   "dependencies": {
     "connect": "^3.4.1",
+    "connect-ioc": "^1.0.0",
     "connect-query": "^0.2.0",
     "cors": "^2.7.1",
     "debug": "^2.2.0",
@@ -34,7 +35,7 @@
     "mkdirp": "^0.5.1",
     "somersault": "^1.0.0",
     "swagger-codegen": "^0.1.1",
-    "swagger-template-es6-server": "0.0.2",
+    "swagger-template-es6-server": "0.0.3",
     "swagger-tools": "^0.10.1",
     "yamljs": "^0.2.7"
   },

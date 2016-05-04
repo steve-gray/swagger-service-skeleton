@@ -38,7 +38,7 @@ the ones in the minimal example above.
     const yamljs = require('yamljs');
 
     const instance = skeleton({
-        // IOC Settings
+        // IOC Settings - See connect-ioc on NPM for more parameters
         ioc: {
             // Automatically register services with the IoC Container
             autoRegister: {
@@ -114,4 +114,6 @@ The following projects are useful reading:
     - somersault
         - IoC for Node.js projects, with support for ES6 classes,
           arrow functions, static objects and regular functions.
+    - connect-ioc
+        - Leverages somersault to provide per-request IoC support.
 
