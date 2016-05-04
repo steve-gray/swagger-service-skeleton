@@ -1,0 +1,62 @@
+swagger: "2.0"
+info:
+  title: Example API
+  description: |
+    Example API
+  version: "0.0.1"
+  license:
+    name: Restricted
+# host: api.linehaul.cd
+basePath: /
+schemes:
+  - http
+  - https
+paths:
+  /add/{x}/{y}:
+    x-swagger-router-controller: math
+    get:
+      summary: Get the sum of two numbers.
+      description: |
+        X + Y = JSON
+      operationId: add
+      parameters:
+        - name: x
+          in: path
+          required: true
+          type: number
+        - name: y
+          in: path
+          required: true
+          type: number
+      tags:
+        - Math
+      responses:
+        "200":
+          description: The product of numbers.
+          x-gulp-swagger-codegen-outcome: success
+          schema:
+            $ref: "#/definitions/BinaryResult"
+
+definitions:
+  BinaryResult: 
+    description: |
+      A result from a binary operation.
+    type: object
+    required:
+      - x
+      - y
+      - operation
+      - result
+    properties:
+      x:
+        description: Left operand
+        type: number
+      y:
+        description: Right operand
+        type: number
+      operation:
+        description: Operation
+        type: string
+      result:
+        description: Result
+        type: number
