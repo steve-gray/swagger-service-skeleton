@@ -84,7 +84,7 @@ describe('Unit Tests', () => {
           },
         });
       });
-      
+
       it('Should load swaggerfile from object if not a string', () => {
         // If we get here, we win.
       });
@@ -102,5 +102,5 @@ describe('Unit Tests', () => {
         instance.close();
       });
     });
-  })
+  });
 });
