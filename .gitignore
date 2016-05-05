@@ -1,7 +1,7 @@
 dist
 node_modules
 *.bak
-*.logs
+*.log
 *.tmp
 .DS_Store
 thumbs.db
