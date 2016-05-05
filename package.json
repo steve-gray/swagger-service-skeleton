@@ -1,6 +1,6 @@
 {
   "name": "swagger-service-skeleton",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Rapid service-skeleton/prototyping solution for NodeJS/Swagger based Microservices.",
   "main": "src/index.js",
   "scripts": {
