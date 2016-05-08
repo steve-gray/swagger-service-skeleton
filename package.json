@@ -1,6 +1,6 @@
 {
   "name": "swagger-service-skeleton",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Rapid service-skeleton/prototyping solution for NodeJS/Swagger based Microservices.",
   "main": "src/index.js",
   "scripts": {
@@ -35,7 +35,7 @@
     "mkdirp": "^0.5.1",
     "somersault": "^1.0.0",
     "swagger-codegen": "^0.1.1",
-    "swagger-template-es6-server": "0.0.4",
+    "swagger-template-es6-server": "0.0.5",
     "swagger-tools": "^0.10.1",
     "yamljs": "^0.2.7"
   },
