@@ -60,6 +60,27 @@ the ones in the minimal example above.
             rootContainer: null,
         },
 
+        // Custom middleware to run
+        customMiddleware: {
+            // Middleware to run after some essentials/setup
+            // but before the swagger-router.
+            beforeSwagger: [
+                (req, res, next) => {
+                  /* do something */
+                  next();  
+                },
+            ],
+            // Middleware to run after swagger-router, if the
+            // request does not get handled by swagger (i.e.
+            // custom error handling)
+            afterSwagger: [
+                (err, req, res, next) => {
+                    /* Do something */
+                    next();
+                },
+            ]
+        },
+
         // Code generation 
         codegen: {
             // swagger-codegen compliant template-set to use.

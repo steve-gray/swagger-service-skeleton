@@ -57,6 +57,10 @@ function startSkeletonApplication(options) {
       },
       ioc: {
       },
+      customMiddleware: {
+        beforeSwagger: [],
+        afterSwagger: [],
+      },
       codegen: {
         controllerStubFolder: 'controllers',
         temporaryDirectory: './.temp',
@@ -88,6 +92,11 @@ function startSkeletonApplication(options) {
     app.use(ioc.middleware);                             // Somersault IoC for controllers.
     app.use(cors());                                     // Cross-origin
 
+    // Custom middleware
+    for (const item of configWithDefaults.customMiddleware.beforeSwagger) {
+      app.use(item);
+    }
+
     // Swagger-tools middleware
     app.use(middleware.swaggerMetadata());
     app.use(middleware.swaggerValidator());
@@ -100,6 +109,12 @@ function startSkeletonApplication(options) {
 
     // Post-request handling middleware
     app.use(redirect(configWithDefaults.redirects));      // Redirect / to /docs
+
+    // Custom middleware
+    for (const item of configWithDefaults.customMiddleware.afterSwagger) {
+      app.use(item);
+    }
+
     app.use(errorHandler());                              // When there's an exception.
 
     const server = app.listen(configWithDefaults.service.listenPort);
