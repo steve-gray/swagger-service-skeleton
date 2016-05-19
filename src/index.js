@@ -69,7 +69,7 @@ function startSkeletonApplication(options) {
       service: {
         listenPort: 10010,
       },
-      cors: {        
+      cors: {
       },
     });
 
