@@ -69,6 +69,8 @@ function startSkeletonApplication(options) {
       service: {
         listenPort: 10010,
       },
+      cors: {        
+      },
     });
 
   // If the swagger input is a string, then load it as a filename
@@ -90,7 +92,7 @@ function startSkeletonApplication(options) {
     app.use(query());                                    // Query-string parsing
     app.use(fiddleware.respondJson());                   // res.json(data, status) support.
     app.use(ioc.middleware);                             // Somersault IoC for controllers.
-    app.use(cors());                                     // Cross-origin
+    app.use(cors(configWithDefaults.cors));              // Cross-origin
 
     // Custom middleware
     for (const item of configWithDefaults.customMiddleware.beforeSwagger) {
