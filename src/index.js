@@ -60,6 +60,7 @@ function startSkeletonApplication(options) {
       customMiddleware: {
         beforeSwagger: [],
         afterSwagger: [],
+        beforeController: [],
       },
       codegen: {
         controllerStubFolder: 'controllers',
@@ -102,6 +103,11 @@ function startSkeletonApplication(options) {
     // Swagger-tools middleware
     app.use(middleware.swaggerMetadata());
     app.use(middleware.swaggerValidator());
+
+    for (const item of configWithDefaults.customMiddleware.beforeController) {
+      app.use(item);
+    }
+
     app.use(middleware.swaggerRouter({
       controllers: path.join(
         configWithDefaults.codegen.temporaryDirectory,
