@@ -13,10 +13,12 @@ describe('Unit Tests', () => {
   describe('Standard Cases', () => {
     let instance = null;
     let preCount = 0;
+    let beforeControllerCount = 0;
     let postCount = 0;
 
     beforeEach(() => {
       preCount = 0;
+      beforeControllerCount = 0;
       postCount = 0;
       instance = skeleton({
         ioc: {
@@ -32,6 +34,12 @@ describe('Unit Tests', () => {
           beforeSwagger: [
             (req, res, next) => {
               preCount = preCount + 1;
+              next();
+            },
+          ],
+          beforeController: [
+            (req, res, next) => {
+              beforeControllerCount = beforeControllerCount + 1;
               next();
             },
           ],
@@ -62,7 +70,7 @@ describe('Unit Tests', () => {
           result: 9,
         }));
 
-    it('Should run customMiddleware.beforeSwagger only on match', () =>
+    it('Should run customMiddleware.beforeSwagger on match', () =>
       request(instance)
         .get('/add/4/5')
         .expect(200, {
@@ -73,6 +81,7 @@ describe('Unit Tests', () => {
         })
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
+          expect(beforeControllerCount).to.be.eql(1, 'Before controller hits');
           expect(postCount).to.be.eql(0, 'Post Middleware hits');
           return Promise.resolve();
         }));
