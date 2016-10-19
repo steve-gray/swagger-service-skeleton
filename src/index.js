@@ -16,6 +16,7 @@ const errorHandler = require('./middleware/error-handler');
 const redirect = require('./middleware/redirect-handler');
 const templates = require('swagger-template-es6-server');
 const yamljs = require('yamljs');
+const cookieParser = require('cookie-parser');
 
 /**
  * Generate the application code in the specified temporary directory.
@@ -60,6 +61,7 @@ function startSkeletonApplication(options) {
       customMiddleware: {
         beforeSwagger: [],
         afterSwagger: [],
+        beforeController: [],
       },
       codegen: {
         controllerStubFolder: 'controllers',
@@ -93,7 +95,7 @@ function startSkeletonApplication(options) {
     app.use(fiddleware.respondJson());                   // res.json(data, status) support.
     app.use(ioc.middleware);                             // Somersault IoC for controllers.
     app.use(cors(configWithDefaults.cors));              // Cross-origin
-
+    app.use(cookieParser());
     // Custom middleware
     for (const item of configWithDefaults.customMiddleware.beforeSwagger) {
       app.use(item);
@@ -102,6 +104,11 @@ function startSkeletonApplication(options) {
     // Swagger-tools middleware
     app.use(middleware.swaggerMetadata());
     app.use(middleware.swaggerValidator());
+
+    for (const item of configWithDefaults.customMiddleware.beforeController) {
+      app.use(item);
+    }
+
     app.use(middleware.swaggerRouter({
       controllers: path.join(
         configWithDefaults.codegen.temporaryDirectory,
