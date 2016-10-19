@@ -57,7 +57,7 @@
     "mocha": "^2.5.1",
     "somersault": "^1.0.0",
     "supertest": "^1.2.0",
-    "supertest-as-promised": "^3.1.0"
+    "supertest-as-promised": "^4.0.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
