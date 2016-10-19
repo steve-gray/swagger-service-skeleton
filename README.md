@@ -70,6 +70,13 @@ the ones in the minimal example above.
                   next();  
                 },
             ],
+            // Middleware to run after filtering, but immediately before the controller
+            beforeController: [
+                (err, req, res, next) => {
+                    /* Do something */
+                    next();
+                },
+            ],
             // Middleware to run after swagger-router, if the
             // request does not get handled by swagger (i.e.
             // custom error handling)
