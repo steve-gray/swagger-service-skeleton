@@ -54,7 +54,7 @@
     "gulp-eslint": "^3.0.1",
     "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",
-    "mocha": "^3.1.2",
+    "mocha": "^3.2.0",
     "somersault": "^1.2.2",
     "supertest": "^2.0.0",
     "supertest-as-promised": "^4.0.0"
