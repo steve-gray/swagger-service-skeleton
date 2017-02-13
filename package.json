@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/steve-gray/swagger-service-skeleton#readme",
   "dependencies": {
-    "connect": "^3.5.0",
+    "connect": "^3.5.1",
     "connect-ioc": "^1.0.6",
     "connect-query": "^0.2.0",
     "cookie-parser": "^1.4.3",
