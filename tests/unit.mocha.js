@@ -267,5 +267,5 @@ describe('Unit Tests', () => {
         instance.close();
       });
     });
- });  
+ });
 });
