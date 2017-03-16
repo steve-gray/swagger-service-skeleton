@@ -70,6 +70,7 @@ function startSkeletonApplication(options) {
       },
       service: {
         listenPort: 10010,
+        hostName: null,
       },
       cors: {
       },
@@ -126,7 +127,7 @@ function startSkeletonApplication(options) {
 
     app.use(errorHandler());                              // When there's an exception.
 
-    const server = app.listen(configWithDefaults.service.listenPort);
+    const server = app.listen(configWithDefaults.service.listenPort, configWithDefaults.service.hostName ? configWithDefaults.service.hostName : null);
     app.close = function closeServer() {
       server.close();
     };
