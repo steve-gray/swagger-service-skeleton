@@ -138,6 +138,7 @@ the ones in the minimal example above.
             // Optional hostName. If the hostname is omitted or 'null', the server will accept connections 
             // on the unspecified IPv6 address (::) when IPv6 is available, 
             // or the unspecified IPv4 address (0.0.0.0) otherwise.
+            // Use '127.0.0.1' instead of localhost
             hostName: 'localhost'            
              
         }

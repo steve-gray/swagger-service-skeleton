@@ -127,6 +127,7 @@ function startSkeletonApplication(options) {
 
     app.use(errorHandler());                              // When there's an exception.
 
+    debug(`server app.listen() listenPort =  ${configWithDefaults.service.listenPort}, hostName =  ${configWithDefaults.service.hostName ? configWithDefaults.service.hostName : null} )`);
     const server = app.listen(configWithDefaults.service.listenPort, configWithDefaults.service.hostName ? configWithDefaults.service.hostName : null);
     app.close = function closeServer() {
       server.close();
