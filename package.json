@@ -34,7 +34,7 @@
     "fiddleware": "^0.1.0",
     "glob": "^7.1.1",
     "mkdirp": "^0.5.1",
-    "somersault": "^1.2.0",
+    "somersault": "^1.2.2",
     "swagger-codegen": "^0.1.1",
     "swagger-template-es6-server": "0.1.0",
     "swagger-tools": "^0.10.1",
