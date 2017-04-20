@@ -38,7 +38,7 @@
     "swagger-codegen": "^0.1.1",
     "swagger-template-es6-server": "0.1.0",
     "swagger-tools": "^0.10.1",
-    "yamljs": "^0.2.8"
+    "yamljs": "^0.2.10"
   },
   "devDependencies": {
     "chai": "^3.5.0",
