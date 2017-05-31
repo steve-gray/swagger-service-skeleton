@@ -41,7 +41,7 @@
     "yamljs": "^0.2.8"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
+    "chai": "^4.0.1",
     "chai-as-promised": "^6.0.0",
     "config": "^1.21.0",
     "connect": "^3.5.0",
