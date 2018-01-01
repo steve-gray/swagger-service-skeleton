@@ -2,11 +2,6 @@
 
 [![Prod Dependencies](https://david-dm.org/fastbean-au/swagger-service-skeleton/status.svg)](https://david-dm.org/fastbean-au/swagger-service-skeleton)
 [![Dev Dependencies](https://david-dm.org/fastbean-au/swagger-service-skeleton/dev-status.svg)](https://david-dm.org/fastbean-au/swagger-service-skeleton#info=devDependencies)
-branch=master)
-[![npm version](https://badge.fury.io/js/swagger-service-skeleton.svg)](https://badge.fury.io/js/swagger-service-skeleton)
-
-![Stats]( https://nodei.co/npm/swagger-service-skeleton.png?downloads=true&downloadRank=true&stars=true)
-![Downloads](https://nodei.co/npm-dl/swagger-service-skeleton.png?height=2)
 
 NPM package for rapidly spinning up REST service skeletons. 
 
