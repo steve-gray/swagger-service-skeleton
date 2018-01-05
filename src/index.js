@@ -56,6 +56,10 @@ function startSkeletonApplication(options) {
           match: /^\/$/,
           target: '/docs',
         },
+        'api-documentation-from-root': {
+          match: /^\/$/,
+          target: '/api-docs',
+        },
       },
       ioc: {
       },
