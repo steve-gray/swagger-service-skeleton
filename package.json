@@ -1,6 +1,6 @@
 {
   "name": "swagger-service-skeleton",
-  "version": "1.3.0",
+  "version": "1.3.3",
   "description": "Rapid service-skeleton/prototyping solution for NodeJS/Swagger based Microservices.",
   "main": "src/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/steve-gray/swagger-service-skeleton.git"
+    "url": "git+https://github.com/fastbean-au/swagger-service-skeleton.git"
   },
   "keywords": [
     "swagger",
@@ -17,46 +17,47 @@
     "template",
     "codegen"
   ],
-  "author": "Steve Gray",
+  "contributors": [
+    "Steve Gray",
+    "Sean Miller <fastbeanau@gmail.com>"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/steve-gray/swagger-service-skeleton/issues"
+    "url": "https://github.com/fastbean-au/swagger-service-skeleton/issues"
   },
-  "homepage": "https://github.com/steve-gray/swagger-service-skeleton#readme",
+  "homepage": "https://github.com/fastbean-au/swagger-service-skeleton#readme",
   "dependencies": {
-    "connect": "^3.5.0",
+    "config": "^1.21.0",
+    "connect": "^3.6.5",
     "connect-ioc": "^1.0.6",
-    "connect-query": "^0.2.0",
+    "connect-query": "^1.0.0",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.1",
-    "debug": "^2.2.0",
+    "debug": "^3.1.0",
     "defaults-deep": "^0.2.3",
     "fiddleware": "^0.1.0",
     "glob": "^7.1.1",
     "mkdirp": "^0.5.1",
-    "somersault": "^1.2.0",
-    "swagger-codegen": "^0.1.1",
-    "swagger-template-es6-server": "0.1.0",
+    "somersault": "^1.2.2",
+    "swagger-codegen": "https://github.com/fastbean-au/swagger-codegen/tarball/master",
+    "swagger-template-es6-server": "https://github.com/fastbean-au/swagger-template-es6-server/tarball/master",
     "swagger-tools": "^0.10.1",
-    "yamljs": "^0.2.8"
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
-    "config": "^1.21.0",
-    "connect": "^3.5.0",
-    "eslint-config-airbnb": "^12.0.0",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.0.1",
-    "eslint-plugin-jsx-a11y": "^2.2.3",
-    "eslint-plugin-react": "^6.4.1",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.5.1",
     "gulp": "^3.9.1",
-    "gulp-esdoc": "^0.3.0",
-    "gulp-eslint": "^3.0.1",
+    "gulp-esdoc": "^0.4.1",
+    "gulp-eslint": "^4.0.1",
     "gulp-istanbul": "^1.1.1",
-    "gulp-mocha": "^3.0.1",
-    "mocha": "^3.1.2",
-    "somersault": "^1.2.2",
-    "supertest": "^2.0.0",
+    "gulp-mocha": "^5.0.0",
+    "mocha": "^4.1.0",
+    "supertest": "^3.0.0",
     "supertest-as-promised": "^4.0.0"
   },
   "publishConfig": {

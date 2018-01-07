@@ -12,6 +12,7 @@ const initializeSwagger = require('swagger-tools').initializeMiddleware;
 const mkdirp = require('mkdirp');
 const path = require('path');
 const query = require('connect-query');
+const swaggerErrorHandler = require('./middleware/swagger-error-handler');
 const errorHandler = require('./middleware/error-handler');
 const redirect = require('./middleware/redirect-handler');
 const templates = require('swagger-template-es6-server');
@@ -103,7 +104,9 @@ function startSkeletonApplication(options) {
 
     // Swagger-tools middleware
     app.use(middleware.swaggerMetadata());
+    app.use(errorHandler());                              // When there's an exception (returns 500).
     app.use(middleware.swaggerValidator());
+    app.use(swaggerErrorHandler());                       // Parameter validations (returns 400).
 
     for (const item of configWithDefaults.customMiddleware.beforeController) {
       app.use(item);
@@ -124,7 +127,7 @@ function startSkeletonApplication(options) {
       app.use(item);
     }
 
-    app.use(errorHandler());                              // When there's an exception.
+    app.use(errorHandler());                              // When there's an exception (returns 500).
 
     const server = app.listen(configWithDefaults.service.listenPort);
     app.close = function closeServer() {

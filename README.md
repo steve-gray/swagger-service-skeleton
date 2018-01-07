@@ -1,15 +1,16 @@
 # swagger-service-skeleton
 
-[![Build Status](https://travis-ci.org/steve-gray/swagger-service-skeleton.svg?branch=master)](https://travis-ci.org/steve-gray/swagger-service-skeleton)
-[![Prod Dependencies](https://david-dm.org/steve-gray/swagger-service-skeleton/status.svg)](https://david-dm.org/steve-gray/swagger-service-skeleton)
-[![Dev Dependencies](https://david-dm.org/steve-gray/swagger-service-skeleton/dev-status.svg)](https://david-dm.org/steve-gray/swagger-service-skeleton#info=devDependencies)
-[![Coverage Status](https://coveralls.io/repos/github/steve-gray/swagger-service-skeleton/badge.svg?branch=master)](https://coveralls.io/github/steve-gray/swagger-service-skeleton?branch=master)
-[![npm version](https://badge.fury.io/js/swagger-service-skeleton.svg)](https://badge.fury.io/js/swagger-service-skeleton)
-
-![Stats]( https://nodei.co/npm/swagger-service-skeleton.png?downloads=true&downloadRank=true&stars=true)
-![Downloads](https://nodei.co/npm-dl/swagger-service-skeleton.png?height=2)
+[![Prod Dependencies](https://david-dm.org/fastbean-au/swagger-service-skeleton/status.svg)](https://david-dm.org/fastbean-au/swagger-service-skeleton)
+[![Dev Dependencies](https://david-dm.org/fastbean-au/swagger-service-skeleton/dev-status.svg)](https://david-dm.org/fastbean-au/swagger-service-skeleton#info=devDependencies)
 
 NPM package for rapidly spinning up REST service skeletons. 
+
+## Status
+This repository/package has been forked from [steve-gray/swagger-service-skeleton](https://github.com/steve-gray/swagger-service-skeleton)
+as it was not being maintained. The automated build pipelines have not yet been put in place, and
+dependencies are sorely out of date. At some point this may be rectified...until then, use cautiously.
+
+To use: follow the [instructions found here.](https://coderwall.com/p/q_gh-w/fork-and-patch-npm-moduels-hosted-on-github)
 
 ## Minimal Example
 The example below shows the minimal, happy-path configuration:
