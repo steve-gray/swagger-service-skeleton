@@ -75,8 +75,6 @@ function startSkeletonApplication(options) {
       },
       cors: {
       },
-      cors: {
-      },
     });
 
   // If the swagger input is a string, then load it as a filename
