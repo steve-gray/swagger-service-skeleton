@@ -9,5 +9,5 @@ const gulp = require('gulp');
 gulp.task('cover', instrument);
 gulp.task('docs', documentation);
 gulp.task('lint', lint);
-gulp.task('test', ['cover'], test);
-gulp.task('default', ['docs', 'lint', 'test']);
+gulp.task('test', gulp.series('cover', test));
+gulp.task('default', gulp.series('docs', 'lint', 'test'));
