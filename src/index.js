@@ -74,6 +74,8 @@ function startSkeletonApplication(options) {
       },
       cors: {
       },
+      cors: {
+      },
     });
 
   // If the swagger input is a string, then load it as a filename
@@ -97,6 +99,7 @@ function startSkeletonApplication(options) {
     app.use(ioc.middleware);                             // Somersault IoC for controllers.
     app.use(cors(configWithDefaults.cors));              // Cross-origin
     app.use(cookieParser());
+
     // Custom middleware
     for (const item of configWithDefaults.customMiddleware.beforeSwagger) {
       app.use(item);
