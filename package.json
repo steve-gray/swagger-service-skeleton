@@ -39,7 +39,7 @@
     "glob": "^7.1.6",
     "mkdirp": "^1.0.4",
     "somersault": "^1.3.0",
-    "swagger-codegen": "https://github.com/fastbean-au/swagger-codegen/tarball/master",
+    "swagger-codegen": "https://github.com/acotty/swagger-codegen/releases/download/v0.2.1/swagger-codegen-v0.2.1.tgz",
     "swagger-template-es6-server": "https://github.com/fastbean-au/swagger-template-es6-server/tarball/master",
     "swagger-tools": "^0.10.4",
     "yamljs": "^0.3.0"

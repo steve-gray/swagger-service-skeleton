@@ -2525,7 +2525,7 @@ gulplog@^1.0.0:
   dependencies:
     glogg "^1.0.0"
 
-handlebars@^4.0.1, handlebars@^4.0.5:
+handlebars@^4.0.1, handlebars@^4.7.7:
   version "4.7.7"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.7.7.tgz#9ce33416aad02dbd6c8fafa8240d5d98004945a1"
   integrity sha512-aAcXm5OAfE/8IXkcZvCepKU3VzW1/39Fb5ZuqMtgI/hT8X2YgoMvBY5dLhq/cpOvw7Lk1nK/UF71aLG/ZnVYRA==
@@ -3789,7 +3789,7 @@ lodash.templatesettings@^3.0.0:
     lodash._reinterpolate "^3.0.0"
     lodash.escape "^3.0.0"
 
-lodash@^4.0.0, lodash@^4.1.0, lodash@^4.11.1, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.4, lodash@^4.2.0, lodash@~4.17.2:
+lodash@^4.0.0, lodash@^4.1.0, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.21, lodash@^4.17.4, lodash@^4.2.0, lodash@~4.17.2:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -5496,14 +5496,14 @@ sver-compat@^1.5.0:
     es6-iterator "^2.0.1"
     es6-symbol "^3.1.1"
 
-"swagger-codegen@https://github.com/fastbean-au/swagger-codegen/tarball/master":
-  version "0.2.0"
-  resolved "https://github.com/fastbean-au/swagger-codegen/tarball/master#cd4f3daaf3e74f080b5324e44c437b80d96ad323"
+"swagger-codegen@https://github.com/acotty/swagger-codegen/releases/download/v0.2.1/swagger-codegen-v0.2.1.tgz":
+  version "0.2.1"
+  resolved "https://github.com/acotty/swagger-codegen/releases/download/v0.2.1/swagger-codegen-v0.2.1.tgz#58e584294044b6fe01d83c54e7006de99b7d0ec8"
   dependencies:
-    debug "^2.2.0"
-    defaults-deep "^0.2.3"
-    handlebars "^4.0.5"
-    lodash "^4.11.1"
+    debug "^4.3.1"
+    defaults-deep "^0.2.4"
+    handlebars "^4.7.7"
+    lodash "^4.17.21"
 
 swagger-converter@^0.1.7:
   version "0.1.7"

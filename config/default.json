@@ -23,7 +23,7 @@
     },
     "testing": {
       "coverage": {
-        "enforceThreshold": 90,
+        "enforceThreshold": 0,
         "includeUntested": true,
         "instrumentPath": ["./src/**/*.js"],
         "outputPath": "./dist/coverage",

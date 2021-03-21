@@ -146,6 +146,10 @@ the ones in the minimal example above.
     });
     module.exports = instance;
 
+## More Detailied Tutorial
+For a more detailed tutorial please see the following GitHub repo:
+    https://github.com/fastbean-au/swagger-service-skeleton-tutorial
+
 ## See Also
 The following projects are useful reading:
 
