@@ -1,6 +1,7 @@
 'use strict';
 
 class MathController {
+/*
   constructor(req, res) {
     if (!req) {
       throw new Error('No req - check ioc');
@@ -9,6 +10,7 @@ class MathController {
       throw new Error('No res - check ioc');
     }
   }
+*/
 
   add(x, y, responder) {
     if (x <= 0 || y <= 0) {

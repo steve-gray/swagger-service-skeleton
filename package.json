@@ -1,6 +1,6 @@
 {
   "name": "swagger-service-skeleton",
-  "version": "1.3.4",
+  "version": "2.0.0-beta.0",
   "description": "Rapid service-skeleton/prototyping solution for NodeJS/Swagger based Microservices.",
   "main": "src/index.js",
   "scripts": {
@@ -15,7 +15,8 @@
     "microservice",
     "skeleton",
     "template",
-    "codegen"
+    "codegen",
+    "openAPI"
   ],
   "contributors": [
     "Steve Gray",
@@ -28,37 +29,31 @@
   "homepage": "https://github.com/fastbean-au/swagger-service-skeleton#readme",
   "dependencies": {
     "config": "^3.3.6",
-    "connect": "^3.7.0",
     "connect-ioc": "^1.0.6",
     "connect-query": "^1.0.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "debug": "^4.3.1",
     "defaults-deep": "^0.2.4",
+    "express": "^4.17.1",
     "fiddleware": "^0.1.0",
-    "glob": "^7.1.6",
     "mkdirp": "^1.0.4",
+    "oas-tools": "https://github.com/acotty/oas-tools/releases/download/v2.1.9-beta.0/oas-tools-v2.1.9-beta.0.tgz",
     "somersault": "^1.3.0",
-    "swagger-codegen": "https://github.com/acotty/swagger-codegen/releases/download/v0.2.1/swagger-codegen-v0.2.1.tgz",
-    "swagger-template-es6-server": "https://github.com/fastbean-au/swagger-template-es6-server/tarball/master",
-    "swagger-tools": "^0.10.4",
+    "swagger-codegen": "https://github.com/acotty/swagger-codegen/releases/download/v0.3.0-beta.0/swagger-codegen-v0.3.0-beta.0.tgz",
+    "swagger-template-es6-server": "https://github.com/acotty/swagger-template-es6-server/releases/download/v0.2.0-beta.0/swagger-template-es6-server-v0.2.0-beta.0.tgz",
     "yamljs": "^0.3.0"
   },
-  "devDependencies": {
+ "devDependencies": {
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.22.0",
     "gulp": "^4.0.2",
     "gulp-esdoc": "^0.4.1",
     "gulp-eslint": "^6.0.0",
     "gulp-istanbul": "^1.1.3",
     "gulp-mocha": "^8.0.0",
     "mocha": "^8.3.2",
-    "supertest": "^6.1.3",
-    "supertest-as-promised": "^4.0.0"
+    "supertest": "^6.1.3"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"

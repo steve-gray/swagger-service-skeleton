@@ -3,16 +3,17 @@
 [![Prod Dependencies](https://david-dm.org/fastbean-au/swagger-service-skeleton/status.svg)](https://david-dm.org/fastbean-au/swagger-service-skeleton)
 [![Dev Dependencies](https://david-dm.org/fastbean-au/swagger-service-skeleton/dev-status.svg)](https://david-dm.org/fastbean-au/swagger-service-skeleton#info=devDependencies)
 
-NPM package for rapidly spinning up REST service skeletons. 
+NPM package for rapidly spinning up REST service skeletons.
 
 ## Status
+
 This repository/package has been forked from [steve-gray/swagger-service-skeleton](https://github.com/steve-gray/swagger-service-skeleton)
-as it was not being maintained. The automated build pipelines have not yet been put in place, and
-dependencies are sorely out of date. At some point this may be rectified...until then, use cautiously.
+as it was not being maintained. The automated build pipelines have not yet been put in place, and dependencies are sorely out of date. At some point this may be rectified...until then, use cautiously.
 
 To use: follow the [instructions found here.](https://coderwall.com/p/q_gh-w/fork-and-patch-npm-moduels-hosted-on-github)
 
 ## Minimal Example
+
 The example below shows the minimal, happy-path configuration:
 
     'use strict';
@@ -34,14 +35,11 @@ The example below shows the minimal, happy-path configuration:
     });
     module.exports = instance;
 
-Calling instance() will start up a complete service on port 10010 serving
-your swagger-API. It expects that controller-implementations are located
-in ./src/controllers relative to your application root path.
+Calling instance() will start up a complete service on port 10010 serving your swagger-API. It expects that  controller-implementations are located in ./src/controllers relative to your application root path.
 
 ## Complete Configuration
-The example below shows a complete-configuration for using the library, 
-with typical defaults specified. The only __required__ parameters are
-the ones in the minimal example above.
+
+The example below shows a complete-configuration for using the library, with typical defaults specified. The only __required__ parameters are the ones in the minimal example above.
 
     'use strict';
     const skeleton = require('swagger-service-skeleton');
@@ -147,10 +145,12 @@ the ones in the minimal example above.
     module.exports = instance;
 
 ## More Detailied Tutorial
+
 For a more detailed tutorial please see the following GitHub repo:
-    https://github.com/fastbean-au/swagger-service-skeleton-tutorial
+    <https://github.com/fastbean-au/swagger-service-skeleton-tutorial>
 
 ## See Also
+
 The following projects are useful reading:
 
     - swagger-codegen
@@ -164,5 +164,4 @@ The following projects are useful reading:
         - IoC for Node.js projects, with support for ES6 classes,
           arrow functions, static objects and regular functions.
     - connect-ioc
-        - Leverages somersault to provide per-request IoC support.
-
+        - Leverages somersault to provide per-request IoC support

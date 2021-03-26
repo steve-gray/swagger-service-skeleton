@@ -1,14 +1,14 @@
 'use strict';
 
 const codegen = require('swagger-codegen');
-const connect = require('connect');
+const express  = require('express');
 const connectIoc = require('connect-ioc');
 const cors = require('cors');
 const debug = require('debug')('swagger-service-skeleton');
 const defaults = require('defaults-deep');
 const fiddleware = require('fiddleware');
 const fs = require('fs');
-const initializeSwagger = require('swagger-tools').initializeMiddleware;
+const oasTools  = require('oas-tools');
 const mkdirp = require('mkdirp');
 const path = require('path');
 const query = require('connect-query');
@@ -70,7 +70,7 @@ function startSkeletonApplication(options) {
         templateSet: templates,
       },
       service: {
-        listenPort: 10010,
+        listenPort: 10020,
         hostName: null,
       },
       cors: {
@@ -83,15 +83,26 @@ function startSkeletonApplication(options) {
     yamljs.load(swaggerFile) : swaggerFile;
 
   // Create service instances
-  const app = connect();
+  const app = express();
   const ioc = connectIoc(configWithDefaults.ioc);
 
   // Generate custom application code
   generateApplicationCode(
     swagger,
-    configWithDefaults.codegen);
+    configWithDefaults.codegen
+  );
 
-  initializeSwagger(swagger, (middleware) => {
+  var options_object = {
+    controllers: path.join(process.cwd(), configWithDefaults.codegen.temporaryDirectory, configWithDefaults.codegen.oas_controllerFolder),
+    loglevel: 'debug',
+    strict: false,
+    router: true,
+    validator: true    // DO NOT set to FALSE!!!!!! 
+  };
+  
+  oasTools.configure(options_object);
+
+  oasTools.initializeMiddleware(swagger, app, (middleware) => {
     // Pre-request handling middleware
     app.use(query());                                    // Query-string parsing
     app.use(fiddleware.respondJson());                   // res.json(data, status) support.
@@ -104,6 +115,9 @@ function startSkeletonApplication(options) {
       app.use(item);
     }
 
+    app.use(function(err, req, res, next) {
+      console.log('stepped into here');
+    });    
     // Swagger-tools middleware
     app.use(middleware.swaggerMetadata());
     app.use(errorHandler());                              // When there's an exception (returns 500).
@@ -133,9 +147,14 @@ function startSkeletonApplication(options) {
 
     debug(`server app.listen() listenPort =  ${configWithDefaults.service.listenPort}, hostName =  ${configWithDefaults.service.hostName} )`);
     const server = app.listen(configWithDefaults.service.listenPort, configWithDefaults.service.hostName);
-    app.close = function closeServer() {
-      server.close();
-    };
+    //if (server.listening){
+      app.close = function closeServer() {
+        server.close();
+      };
+    // } else {
+    //  debug(`listenPort ${configWithDefaults.service.listenPort} in use!!!`);
+    //  throw new TypeError(`Express server cannot bind to port ${configWithDefaults.service.listenPort} as it is in use!!!`);
+    // }
   });
 
   return app;
