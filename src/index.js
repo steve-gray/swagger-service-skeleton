@@ -1,6 +1,6 @@
 'use strict';
 
-const codegen = require('swagger-codegen');
+const codegen = require('swagger-codegen').generateCode;
 const express  = require('express');
 const connectIoc = require('connect-ioc');
 const cors = require('cors');
@@ -15,7 +15,7 @@ const query = require('connect-query');
 const swaggerErrorHandler = require('./middleware/swagger-error-handler');
 const errorHandler = require('./middleware/error-handler');
 const redirect = require('./middleware/redirect-handler');
-const templates = require('swagger-template-es6-server');
+const templates = require('swagger-codegen').oas3_templates;
 const yamljs = require('yamljs');
 const cookieParser = require('cookie-parser');
 
