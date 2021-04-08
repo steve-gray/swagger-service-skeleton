@@ -36,6 +36,9 @@ paths:
           x-gulp-swagger-codegen-outcome: success
           schema:
             $ref: "#/definitions/BinaryResult"
+        '405':
+          description: Bad input data
+          x-gulp-swagger-codegen-outcome: badInputError
 
 definitions:
   BinaryResult: 

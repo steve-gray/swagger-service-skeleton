@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: Example API
+  description: Example API
+  version: 0.0.1
+  license:
+    name: Restricted
+
+servers:
+  - url: /
+
+paths:
+  "/add/{x}/{y}":
+    x-swagger-router-controller: math
+    get:
+      summary: Get the sum of two numbers.
+      description: X + Y = JSON
+      operationId: add
+      parameters:
+        - name: x
+          description: Left operand
+          in: path
+          required: true
+          schema:
+            type: number
+        - name: y
+          description: Left operand
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: The product of numbers.
+          x-gulp-swagger-codegen-outcome: success
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/BinaryResult"
+        '400':
+          description: Bad request
+          x-gulp-swagger-codegen-outcome: badRequestError
+        '405':
+          description: Bad input data
+          x-gulp-swagger-codegen-outcome: badInputError
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/ExceptionResponse"
+        "500":
+          x-gulp-swagger-codegen-outcome: error
+          description: Error
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/ExceptionResponse"
+
+components:
+  schemas:
+
+    Add:
+      description: A result from a binary operation.
+      type: object
+      required:
+        - x
+        - y
+      properties:
+        x:
+          description: Left operand
+          type: number
+        y:
+          description: Right operand
+          type: number
+
+    BinaryResult:
+      description: A result from a binary operation.
+      type: object
+      required:
+        - x
+        - y
+        - operation
+        - result
+      properties:
+        x:
+          description: Left operand
+          type: number
+        y:
+          description: Right operand
+          type: number
+        operation:
+          description: Operation
+          type: string
+        result:
+          description: Result
+          type: number
+    ExceptionResponse:
+      description: An error has occured in the system and this object contains information to diagnose the problem.
+      required:
+        - errorId
+        - errorCode
+        - message
+      properties:
+        errorId:
+          description: Unique error Id used for code debugging if info stored
+          type: string
+        errorCode:
+          description: Error code from system used to track nature of error.
+          type: string
+        message:
+          description: User friendly version of the error.
+          type: string
+        detail:
+          description: Error detail. Only returned if service is in diagnostic mode.
+          type: string

@@ -2,10 +2,9 @@
 
 const cap = require('chai-as-promised');
 const chai = require('chai');
-const skeleton = require('../src');
+const glob = require('glob');
 const request = require('supertest');
-const yamljs = require('yamljs');
-const debug = require('debug');
+const skeleton = require('../src');
 
 const expect = chai.expect;
 chai.use(cap);
@@ -17,55 +16,63 @@ describe('Unit Tests', () => {
     let beforeControllerCount = 0;
     let postCount = 0;
 
-    beforeEach(() => {
-      console.log('Current directory: ' + process.cwd());
-      preCount = 0;
-      beforeControllerCount = 0;
-      postCount = 0;
-      instance = skeleton({
-        ioc: {
-          autoRegister: { pattern: './services/**/*.js', rootDirectory: __dirname },
-        },
-        codegen: {
-          templateSettings: {
-            implementationPath: '../../controllers',
+    beforeEach( () => {
+      return new Promise((resolve, reject) => {
+        preCount = 0;
+        beforeControllerCount = 0;
+        postCount = 0;
+        const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
+
+        // console.log('Current directory: ' + process.cwd());
+        // console.log('swaggerFileName : ' + swaggerFileName);
+
+        instance = skeleton({
+          ioc: {
+            autoRegister: { pattern: './services/**/*.js', rootDirectory: __dirname },
           },
-          temporaryDirectory: './tests/.temp',
-          oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory 
-        },
-        customMiddleware: {
-          beforeSwagger: [
-            (req, res, next) => {
-              console.log(`preCount before : ${preCount}`);
-              preCount = preCount + 1;
-              console.log(`preCount after: ${preCount}`);
-              next();
+          codegen: {
+            templateSettings: {
+              implementationPath: '../../controllers',
             },
-          ],
-          beforeController: [
-            (req, res, next) => {
-              console.log(`beforeControllerCount before : ${beforeControllerCount}`);
-              beforeControllerCount = beforeControllerCount + 1;
-              console.log(`beforeControllerCount after: ${beforeControllerCount}`);
-              next();
-            },
-          ],
-          afterSwagger: [
-            (req, res, next) => {
-              console.log(`postCount before : ${postCount}`);
-              postCount = postCount + 1;
-              console.log(`postCount after: ${postCount}`);
-              next();
-            },
-          ],
-        },
-        service: {
-          swagger: './tests/contracts/example_oas3.yaml',
-          listenPort: 0,
-          hostName: "localhost",
-        },
+            temporaryDirectory: './tests/.temp',
+            oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory 
+          },
+          customMiddleware: {
+            beforeSwagger: [
+              (req, res, next) => {
+                preCount = preCount + 1;
+                next();
+              },
+            ],
+            beforeController: [
+              (req, res, next) => {
+                beforeControllerCount = beforeControllerCount + 1;
+                next();
+              },
+            ],
+            afterSwagger: [
+              (req, res, next) => {
+                postCount = postCount + 1;
+                next();
+              },
+            ],
+          },
+          service: {
+            swagger: swaggerFileName,
+            listenPort: 0,
+            hostName: "localhost",
+          },
+        })
+        .then( app => {
+          instance = app;
+          resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
       });
     });
+
     afterEach(() => {
       instance.close();
     });
@@ -89,7 +96,6 @@ describe('Unit Tests', () => {
         );
     });
 
-/*    
     it('Should run customMiddleware.beforeSwagger on match', () =>
       request(instance)
         .get('/add/4/5')
@@ -104,10 +110,10 @@ describe('Unit Tests', () => {
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
           expect(beforeControllerCount).to.be.eql(1, 'Before controller hits');
-          expect(postCount).to.be.eql(0, 'Post Middleware hits');
-          // return Promise.resolve();
-        }));
-*/
+          expect(postCount).to.be.eql(1, 'Post Middleware hits');
+        })
+    );
+
     it('Should run customMiddleware.afterSwagger too on error', () =>
       request(instance)
         .get('/does-not-exist/4/5')
@@ -115,7 +121,6 @@ describe('Unit Tests', () => {
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
           expect(postCount).to.be.eql(1, 'Post Middleware hits');
-          // return Promise.resolve();
         }));
 
     it('Should redirect by default from /', () =>
@@ -130,61 +135,88 @@ describe('Unit Tests', () => {
         .expect(404)
     );
 
-/*
-    it('Should 500 when exception from controller', () =>
+    it('Should 400 when passed in bad parameters from controller', () =>
       request(instance)
         .get('/add/-1/4')
+        .expect(400)
+    );
+
+    it('Should 405 when passed in bad parameters from controller', () =>
+      request(instance)
+        .get('/add/-2/-2')
+        .expect(405)
+    );
+
+    it('Should 500 when passed in bad parameters from controller', () =>
+      request(instance)
+        .get('/add/0/0')
         .expect(500)
     );
-*/
+
+    it('Should 500 due to exception being thrown in the controller', () =>
+      request(instance)
+        .get('/add/-1/-1')
+        .expect(500)
+    );
   });
 
-  describe('Standard Cases 127.0.0.1 handling', () => {
+  describe.only('Standard Cases 127.0.0.1 handling', () => {
     let instance = null;
     let preCount = 0;
     let beforeControllerCount = 0;
     let postCount = 0;
 
     beforeEach(() => {
-      preCount = 0;
-      beforeControllerCount = 0;
-      postCount = 0;
-      instance = skeleton({
-        ioc: {
-          autoRegister: { pattern: './services/**/*.js', rootDirectory: __dirname },
-        },
-        codegen: {
-          templateSettings: {
-            implementationPath: '../../controllers',
+      return new Promise((resolve, reject) => {
+        beforeControllerCount = 0;
+        postCount = 0;
+        const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
+        console.log('swaggerFileName : ' + swaggerFileName);
+
+        instance = skeleton({
+          ioc: {
+            autoRegister: { pattern: './services/**/*.js', rootDirectory: __dirname },
           },
-          temporaryDirectory: './tests/.temp',
-          oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory 
-        },
-        customMiddleware: {
-          beforeSwagger: [
-            (req, res, next) => {
-              preCount = preCount + 1;
-              next();
+          codegen: {
+            templateSettings: {
+              implementationPath: '../../controllers',
             },
-          ],
-          beforeController: [
-            (req, res, next) => {
-              beforeControllerCount = beforeControllerCount + 1;
-              next();
-            },
-          ],
-          afterSwagger: [
-            (req, res, next) => {
-              postCount = postCount + 1;
-              next();
-            },
-          ],
-        },
-        service: {
-          swagger: './tests/contracts/example_oas3.yaml',
-          listenPort: 0,
-          hostName: "localhost",
-        },
+            temporaryDirectory: './tests/.temp',
+            oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory 
+          },
+          customMiddleware: {
+            beforeSwagger: [
+              (req, res, next) => {
+                preCount = preCount + 1;
+                next();
+              },
+            ],
+            beforeController: [
+              (req, res, next) => {
+                beforeControllerCount = beforeControllerCount + 1;
+                next();
+              },
+            ],
+            afterSwagger: [
+              (req, res, next) => {
+                postCount = postCount + 1;
+                next();
+              },
+            ],
+          },
+          service: {
+            swagger: swaggerFileName,
+            listenPort: 0,
+            hostName: "127.0.0.1",
+          },
+        })
+        .then( app => {
+          instance = app;
+          resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
       });
     });
 
@@ -206,8 +238,7 @@ describe('Unit Tests', () => {
           result: 9,
         }));
 
-/*
-    it('Should run customMiddleware.beforeSwagger on match', () =>
+    it.only('Should run customMiddleware.beforeSwagger on match', () => {
       request(instance)
         .get('/add/4/5')
         .expect(200, {
@@ -219,10 +250,9 @@ describe('Unit Tests', () => {
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
           expect(beforeControllerCount).to.be.eql(1, 'Before controller hits');
-          expect(postCount).to.be.eql(0, 'Post Middleware hits');
-          return Promise.resolve();
-        }));
-*/
+          expect(postCount).to.be.eql(1, 'Post Middleware hits');
+        });
+    });
 
     it('Should run customMiddleware.afterSwagger too on error', () =>
       request(instance)
@@ -231,7 +261,6 @@ describe('Unit Tests', () => {
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
           expect(postCount).to.be.eql(1, 'Post Middleware hits');
-          return Promise.resolve();
         }));
 
     it('Should redirect by default from /', () =>
@@ -246,38 +275,67 @@ describe('Unit Tests', () => {
         .expect(404)
     );
 
-/*
-    it('Should 500 when exception from controller', () =>
+    it('Should 400 when passed in bad parameters from controller', () =>
       request(instance)
         .get('/add/-1/4')
+        .expect(400)
+    );
+
+    it('Should 405 when passed in bad parameters from controller', () =>
+      request(instance)
+        .get('/add/-2/-2')
+        .expect(405)
+    );
+
+    it('Should 500 when passed in bad parameters from controller', () =>
+      request(instance)
+        .get('/add/0/0')
         .expect(500)
     );
-*/
 
-  });    
+    it('Should 500 due to exception being thrown in the controller', () =>
+      request(instance)
+        .get('/add/-1/-1')
+        .expect(500)
+    );
+
+  });
 
   describe('Special input handling', () => {
     describe('service.swagger = object', () => {
       let instance = null;
+      const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
+      console.log('swaggerFileName : ' + swaggerFileName);
+
       beforeEach(() => {
-        instance = skeleton({
-          ioc: {
-            autoRegister: { pattern: './services/**/*.js', rootDirectory: __dirname },
-          },
-          codegen: {
-            templateSettings: {
-              implementationPath: '../../controllers',
+        return new Promise((resolve, reject) => {
+          instance = skeleton({
+            ioc: {
+              autoRegister: { pattern: './services/**/*.js', rootDirectory: __dirname },
             },
-            temporaryDirectory: './tests/.temp',
-            oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory 
-          },
-          service: {
-            swagger: './tests/contracts/example_oas3.yaml',
-            listenPort: 0,
-            hostName: "localhost",
+            codegen: {
+              templateSettings: {
+                implementationPath: '../../controllers',
+              },
+              temporaryDirectory: './tests/.temp',
+              oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory 
             },
+            service: {
+              swagger: swaggerFileName,
+              listenPort: 0,
+              hostName: "localhost",
+            },
+          })
+          .then( app => {
+            instance = app;
+            resolve();
+          })
+          .catch(err => {
+            reject(err);
+          });
         });
       });
+  
       afterEach(() => {
         instance.close();
       });

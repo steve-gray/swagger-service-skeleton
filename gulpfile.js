@@ -7,6 +7,7 @@
 //debug.enable('express:**');
 
 //debug(`process.env.DEBUG : ${process.env.DEBUG}`);
+//process.env.DEBUG='*';
 
 
 const documentation = require('./tasks/documentation');

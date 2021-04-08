@@ -38,8 +38,10 @@
     "defaults-deep": "^0.2.4",
     "express": "^4.17.1",
     "fiddleware": "^0.1.0",
+    "glob": "^7.1.6",
     "mkdirp": "^1.0.4",
     "oas-tools": "https://github.com/acotty/oas-tools/releases/download/v2.1.9-beta.0/oas-tools-v2.1.9-beta.0.tgz",
+    "openapi-enforcer": "^1.14.0",
     "somersault": "^1.3.0",
     "swagger-codegen": "https://github.com/acotty/swagger-codegen/releases/download/v0.3.0-beta.3/swagger-codegen-v0.3.0-beta.3.tgz",
     "yamljs": "^0.3.0"
@@ -57,5 +59,8 @@
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
+  },
+  "engines": {
+    "node": ">=8"
   }
 }

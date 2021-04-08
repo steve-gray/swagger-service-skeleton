@@ -47,7 +47,7 @@ function generateApplicationCode(swagger, codegenOptions) {
 /**
  * Initialize the application skeleton
  */
-function startSkeletonApplication(options) {
+async function startSkeletonApplication(options) {
   debug('Starting to create application skeleton');
   const configWithDefaults = defaults(
     options, {
@@ -97,67 +97,87 @@ function startSkeletonApplication(options) {
     loglevel: 'debug',
     strict: false,
     router: true,
-    validator: true    // DO NOT set to FALSE!!!!!! 
+    validator: true    // DO NOT set to FALSE with express!!!!!! 
   };
   
-  oasTools.configure(options_object);
+  // DO NOT use the following as the checks  will pass BAD openAPI files!!!!
+  // oasTools.init_checks(swagger, initcheckFakeCallback);
+  // const SwaggerParser =  require('@apidevtools/swagger-parser');
+  const Enforcer = require('openapi-enforcer');
+  return (
+    await Enforcer(swaggerFile, { fullResult: true })
+    .then(function ({ error, warning }) {
+        if (!error) {
+            if (warning) {
+              console.warn(warning);
+            } else {
+              console.log('No errors with your document');
+            }
+        } else {
+            console.error(error);
+            return Promise.reject(error);
+            // throw new Error(error);
+        }
+    })
+    .then( () => {
+      oasTools.configure(options_object);
 
-  oasTools.initializeMiddleware(swagger, app, (middleware) => {
-    // Pre-request handling middleware
-    app.use(query());                                    // Query-string parsing
-    app.use(fiddleware.respondJson());                   // res.json(data, status) support.
-    app.use(ioc.middleware);                             // Somersault IoC for controllers.
-    app.use(cors(configWithDefaults.cors));              // Cross-origin
-    app.use(cookieParser());
+      oasTools.initializeMiddleware(swagger, app, (middleware) => {
+        // Pre-request handling middleware
+        app.use(query());                                    // Query-string parsing
+        app.use(fiddleware.respondJson());                   // res.json(data, status) support.
+        app.use(ioc.middleware);                             // Somersault IoC for controllers.
+        app.use(cors(configWithDefaults.cors));              // Cross-origin
+        app.use(cookieParser());
 
-    // Custom middleware
-    for (const item of configWithDefaults.customMiddleware.beforeSwagger) {
-      app.use(item);
-    }
+        // Custom middleware
+        for (const item of configWithDefaults.customMiddleware.beforeSwagger) {
+          app.use(item);
+        }
 
-    app.use(function(err, req, res, next) {
-      console.log('stepped into here');
-    });    
-    // Swagger-tools middleware
-    app.use(middleware.swaggerMetadata());
-    app.use(errorHandler());                              // When there's an exception (returns 500).
-    app.use(middleware.swaggerValidator());
-    app.use(swaggerErrorHandler());                       // Parameter validations (returns 400).
+        // Swagger-tools middleware
+        app.use(middleware.swaggerMetadata());
+        //app.use(errorHandler());                              // When there's an exception (returns 500).
+        app.use(middleware.swaggerValidator());
+        //app.use(swaggerErrorHandler());                       // Parameter validations (returns 400).
 
-    for (const item of configWithDefaults.customMiddleware.beforeController) {
-      app.use(item);
-    }
+        for (const item of configWithDefaults.customMiddleware.beforeController) {
+          app.use(item);
+        }
 
-    app.use(middleware.swaggerRouter({
-      controllers: path.join(
-        configWithDefaults.codegen.temporaryDirectory,
-        configWithDefaults.codegen.controllerStubFolder),
-    }));
-    app.use(middleware.swaggerUi());
+        app.use(middleware.swaggerRouter({
+          controllers: path.join(
+            configWithDefaults.codegen.temporaryDirectory,
+            configWithDefaults.codegen.controllerStubFolder),
+        }));
+        app.use(middleware.swaggerUi());
 
-    // Post-request handling middleware
-    app.use(redirect(configWithDefaults.redirects));      // Redirect / to /docs
+        // Post-request handling middleware
+        app.use(redirect(configWithDefaults.redirects));      // Redirect / to /docs
 
-    // Custom middleware
-    for (const item of configWithDefaults.customMiddleware.afterSwagger) {
-      app.use(item);
-    }
+        // Custom middleware
+        for (const item of configWithDefaults.customMiddleware.afterSwagger) {
+          app.use(item);
+        }
 
-    app.use(errorHandler());                              // When there's an exception (returns 500).
+        app.use(errorHandler());                              // When there's an exception (returns 500).
+        app.use(swaggerErrorHandler());                       // Parameter validations (returns 400).
 
-    debug(`server app.listen() listenPort =  ${configWithDefaults.service.listenPort}, hostName =  ${configWithDefaults.service.hostName} )`);
-    const server = app.listen(configWithDefaults.service.listenPort, configWithDefaults.service.hostName);
-    //if (server.listening){
-      app.close = function closeServer() {
-        server.close();
-      };
-    // } else {
-    //  debug(`listenPort ${configWithDefaults.service.listenPort} in use!!!`);
-    //  throw new TypeError(`Express server cannot bind to port ${configWithDefaults.service.listenPort} as it is in use!!!`);
-    // }
-  });
+        debug(`server app.listen() listenPort =  ${configWithDefaults.service.listenPort}, hostName =  ${configWithDefaults.service.hostName ? configWithDefaults.service.hostName : null} )`);
+        const server = app.listen(configWithDefaults.service.listenPort, configWithDefaults.service.hostName ? configWithDefaults.service.hostName : null);
+        //if (server.listening){
+          app.close = function closeServer() {
+            server.close();
+          };
+        // } else {
+        //  debug(`listenPort ${configWithDefaults.service.listenPort} in use!!!`);
+        //  throw new TypeError(`Express server cannot bind to port ${configWithDefaults.service.listenPort} as it is in use!!!`);
+        // }
+      });
 
-  return app;
+      return Promise.resolve(app);
+    })
+  );
 }
 
 module.exports = startSkeletonApplication;
