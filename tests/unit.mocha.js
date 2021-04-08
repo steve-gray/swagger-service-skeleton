@@ -82,7 +82,7 @@ describe('Unit Tests', () => {
     });
 
     it('Should be able to add', () => {
-      console.log('Current directory: ' + process.cwd());
+      // console.log('Current directory: ' + process.cwd());
       return request(instance)
         .get('/add/4/5')
         .set('Accept', 'application/json')
@@ -160,7 +160,7 @@ describe('Unit Tests', () => {
     );
   });
 
-  describe.only('Standard Cases 127.0.0.1 handling', () => {
+  describe('Standard Cases 127.0.0.1 handling', () => {
     let instance = null;
     let preCount = 0;
     let beforeControllerCount = 0;
@@ -168,10 +168,11 @@ describe('Unit Tests', () => {
 
     beforeEach(() => {
       return new Promise((resolve, reject) => {
+        preCount = 0;
         beforeControllerCount = 0;
         postCount = 0;
         const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
-        console.log('swaggerFileName : ' + swaggerFileName);
+        // console.log('swaggerFileName : ' + swaggerFileName);
 
         instance = skeleton({
           ioc: {
@@ -238,7 +239,7 @@ describe('Unit Tests', () => {
           result: 9,
         }));
 
-    it.only('Should run customMiddleware.beforeSwagger on match', () => {
+    it('Should run customMiddleware.beforeSwagger on match', () => {
       request(instance)
         .get('/add/4/5')
         .expect(200, {
@@ -305,7 +306,7 @@ describe('Unit Tests', () => {
     describe('service.swagger = object', () => {
       let instance = null;
       const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
-      console.log('swaggerFileName : ' + swaggerFileName);
+      // console.log('swaggerFileName : ' + swaggerFileName);
 
       beforeEach(() => {
         return new Promise((resolve, reject) => {
