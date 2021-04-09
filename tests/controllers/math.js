@@ -2,7 +2,7 @@
 
 class MathController {
 
-  static add(x, y, responder) {
+  add(x, y, responder) {
     if (x === 0 && y === 0) {
       return responder.error({
         errorCode: 500,

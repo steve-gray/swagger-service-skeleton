@@ -1,28 +1,27 @@
 'use strict';
 
-//const cap = require('chai-as-promised');
+// const cap = require('chai-as-promised');
 const {expect} = require('chai');
 const glob = require('glob');
 const request = require('supertest');
+const asDump = require('./async-dump');
 const skeleton = require('../src');
-const asyncDump = require('./async-dump.js');
 
-//const expect = chai.expect;
-//chai.use(cap);
+// chai.use(cap);
 
 describe('Unit Tests', () => {
 
-  after(() => {
-    asyncDump();
-  });
+  //after(() => {
+  //  asDump.asyncDump();
+  //});
 
-  describe('Standard Cases', () => {
+  describe.only('Standard Cases', () => {
     let instance = null;
     let preCount = 0;
     let beforeControllerCount = 0;
     let postCount = 0;
 
-    beforeEach( () => {
+    beforeEach( async () => {
       return new Promise((resolve, reject) => {
         preCount = 0;
         beforeControllerCount = 0;
@@ -71,10 +70,11 @@ describe('Unit Tests', () => {
         })
         .then( (app) => {
           instance = app;
-          resolve();
+          return resolve();
         })
-        .catch( (err) => {
-          reject(err);
+        .catch( (error) => {
+          // throw new Error(error);
+          return reject(error);
         });
       });
     });
@@ -83,8 +83,9 @@ describe('Unit Tests', () => {
       instance.close();
     });
 
-    it('Should handle requests', () => {
+    it('Should handle requests', (done) => {
       // Start up, shut down
+      done();
     });
 
     it('Should be able to add', () => {
