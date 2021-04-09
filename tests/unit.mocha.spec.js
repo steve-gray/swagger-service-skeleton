@@ -1,15 +1,21 @@
 'use strict';
 
-const cap = require('chai-as-promised');
-const chai = require('chai');
+//const cap = require('chai-as-promised');
+const {expect} = require('chai');
 const glob = require('glob');
 const request = require('supertest');
 const skeleton = require('../src');
+const asyncDump = require('./async-dump.js');
 
-const expect = chai.expect;
-chai.use(cap);
+//const expect = chai.expect;
+//chai.use(cap);
 
 describe('Unit Tests', () => {
+
+  after(() => {
+    asyncDump();
+  });
+
   describe('Standard Cases', () => {
     let instance = null;
     let preCount = 0;
@@ -35,24 +41,24 @@ describe('Unit Tests', () => {
               implementationPath: '../../controllers',
             },
             temporaryDirectory: './tests/.temp',
-            oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory 
+            oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory
           },
           customMiddleware: {
             beforeSwagger: [
               (req, res, next) => {
-                preCount = preCount + 1;
+                preCount += 1;
                 next();
               },
             ],
             beforeController: [
               (req, res, next) => {
-                beforeControllerCount = beforeControllerCount + 1;
+                beforeControllerCount += 1;
                 next();
               },
             ],
             afterSwagger: [
               (req, res, next) => {
-                postCount = postCount + 1;
+                postCount +=1;
                 next();
               },
             ],
@@ -63,11 +69,11 @@ describe('Unit Tests', () => {
             hostName: "localhost",
           },
         })
-        .then( app => {
+        .then( (app) => {
           instance = app;
           resolve();
         })
-        .catch(err => {
+        .catch( (err) => {
           reject(err);
         });
       });
@@ -183,24 +189,24 @@ describe('Unit Tests', () => {
               implementationPath: '../../controllers',
             },
             temporaryDirectory: './tests/.temp',
-            oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory 
+            oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory
           },
           customMiddleware: {
             beforeSwagger: [
               (req, res, next) => {
-                preCount = preCount + 1;
+                preCount += 1;
                 next();
               },
             ],
             beforeController: [
               (req, res, next) => {
-                beforeControllerCount = beforeControllerCount + 1;
+                beforeControllerCount += 1;
                 next();
               },
             ],
             afterSwagger: [
               (req, res, next) => {
-                postCount = postCount + 1;
+                postCount += 1;
                 next();
               },
             ],
@@ -211,11 +217,11 @@ describe('Unit Tests', () => {
             hostName: "127.0.0.1",
           },
         })
-        .then( app => {
+        .then( (app) => {
           instance = app;
           resolve();
         })
-        .catch(err => {
+        .catch( (err) => {
           reject(err);
         });
       });
@@ -319,7 +325,7 @@ describe('Unit Tests', () => {
                 implementationPath: '../../controllers',
               },
               temporaryDirectory: './tests/.temp',
-              oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory 
+              oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory
             },
             service: {
               swagger: swaggerFileName,
@@ -327,16 +333,16 @@ describe('Unit Tests', () => {
               hostName: "localhost",
             },
           })
-          .then( app => {
+          .then( (app) => {
             instance = app;
             resolve();
           })
-          .catch(err => {
+          .catch( (err) => {
             reject(err);
           });
         });
       });
-  
+
       afterEach(() => {
         instance.close();
       });

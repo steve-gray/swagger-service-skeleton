@@ -2,10 +2,7 @@
 
 class MathController {
 
-  constructor() {
-  }
-
-  add(x, y, responder) {
+  static add(x, y, responder) {
     if (x === 0 && y === 0) {
       return responder.error({
         errorCode: 500,
@@ -32,8 +29,7 @@ class MathController {
       });
     }
 
-
-    responder.success({
+    return responder.success({
       x,
       y,
       operation: 'add',

@@ -18,7 +18,8 @@
         "./tests/**/*.js",
         "!./tests/**/templates/**/*.*",
         "!./tests/**/reference/**/*.*",
-        "!./tests/**/output/**/*.*"
+        "!./tests/**/output/**/*.*",
+        "!./tests/**/.temp/**/*.*"
       ]
     },
     "testing": {
@@ -26,8 +27,8 @@
         "enforceThreshold": 0,
         "includeUntested": true,
         "instrumentPath": ["./src/**/*.js"],
-        "outputPath": "./dist/coverage",
-        "tempPath": "./dist/coverage-temp"
+        "outputPath": "./dist/web_api",
+        "tempPath": "./dist/web_api-temp"
       },
       "inputs": [
         "./tests/**/*.mocha.js"

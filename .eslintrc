@@ -1,0 +1,64 @@
+{
+  "env": {
+    "node": true,
+    "mocha": true,
+    "es6": true
+  },
+  "globals": {
+    "request": true,
+    "appRoot": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+
+  },  
+  "extends": "airbnb",
+  "rules": {
+    "generator-star-spacing": "off",
+    "import/no-extraneous-dependencies": "off",
+    "linebreak-style": "off",
+    "quotes": ["off", "double"],
+    "implicit-arrow-linebreak": ["off" , "beside"],
+    "function-paren-newline": ["off", "multiline"],
+    "comma-dangle": ["off", "never"],
+    "arrow-body-style": ["off", "as-needed"],
+    "no-restricted-syntax": [
+      "off",
+      {
+          "selector": "ForOfStatement",
+          "message": "Change code to use foreach if possible"
+      }
+    ],
+    "no-underscore-dangle": "off",
+    "max-len": [
+      "error",
+      200
+    ],
+    "camelcase": "off",
+    "spaced-comment": "off",
+    "new-cap": "off",
+    "indent": "off",
+    "space-before-blocks": "off",
+    "padded-blocks": "off",
+    "object-curly-spacing": "off",
+    "keyword-spacing": "off",
+    "brace-style": "off",
+    "space-infix-ops": "off",
+    "space-in-parens": "off",
+    "curly": "off",
+    "no-multi-spaces": "off",
+    "comma-spacing": "off",
+    "key-spacing": "off",
+    "arrow-spacing": "off",
+    "prefer-const": "off",
+    "semi-spacing": "off",
+    "no-trailing-spaces": "warn",
+    "strict": "off",
+    "import/newline-after-import": "off",
+    "prefer-template": "off",
+    "no-console": "warn",
+    "no-param-reassign": "off",
+    "no-loop-func": "off"
+  }
+}

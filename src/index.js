@@ -1,23 +1,24 @@
 'use strict';
 
 const codegen = require('swagger-codegen').generateCode;
+const cookieParser = require('cookie-parser');
 const express  = require('express');
 const connectIoc = require('connect-ioc');
 const cors = require('cors');
 const debug = require('debug')('swagger-service-skeleton');
 const defaults = require('defaults-deep');
+const Enforcer = require('openapi-enforcer');
 const fiddleware = require('fiddleware');
 const fs = require('fs');
 const oasTools  = require('oas-tools');
 const mkdirp = require('mkdirp');
 const path = require('path');
 const query = require('connect-query');
+const templates = require('swagger-codegen').oas3_templates;
+const yamljs = require('yamljs');
 const swaggerErrorHandler = require('./middleware/swagger-error-handler');
 const errorHandler = require('./middleware/error-handler');
 const redirect = require('./middleware/redirect-handler');
-const templates = require('swagger-codegen').oas3_templates;
-const yamljs = require('yamljs');
-const cookieParser = require('cookie-parser');
 
 /**
  * Generate the application code in the specified temporary directory.
@@ -79,8 +80,7 @@ async function startSkeletonApplication(options) {
 
   // If the swagger input is a string, then load it as a filename
   const swaggerFile = configWithDefaults.service.swagger;
-  const swagger = typeof swaggerFile === 'string' ?
-    yamljs.load(swaggerFile) : swaggerFile;
+  const swagger = typeof swaggerFile === 'string' ? yamljs.load(swaggerFile) : swaggerFile;
 
   // Create service instances
   const app = express();
@@ -92,21 +92,20 @@ async function startSkeletonApplication(options) {
     configWithDefaults.codegen
   );
 
-  var options_object = {
+  const options_object = {
     controllers: path.join(process.cwd(), configWithDefaults.codegen.temporaryDirectory, configWithDefaults.codegen.oas_controllerFolder),
     loglevel: 'debug',
     strict: false,
     router: true,
-    validator: true    // DO NOT set to FALSE with express!!!!!! 
+    validator: true    // DO NOT set to FALSE with express!!!!!!
   };
-  
+
   // DO NOT use the following as the checks  will pass BAD openAPI files!!!!
   // oasTools.init_checks(swagger, initcheckFakeCallback);
   // const SwaggerParser =  require('@apidevtools/swagger-parser');
-  const Enforcer = require('openapi-enforcer');
   return (
-    await Enforcer(swaggerFile, { fullResult: true })
-    .then(function ({ error, warning }) {
+    Enforcer(swaggerFile, { fullResult: true })
+    .then(({ error, warning }) => {
         if (!error) {
             if (warning) {
               console.warn(warning);
@@ -115,8 +114,7 @@ async function startSkeletonApplication(options) {
             }
         } else {
             console.error(error);
-            return Promise.reject(error);
-            // throw new Error(error);
+            throw new Error(error);
         }
     })
     .then( () => {
@@ -131,9 +129,7 @@ async function startSkeletonApplication(options) {
         app.use(cookieParser());
 
         // Custom middleware
-        for (const item of configWithDefaults.customMiddleware.beforeSwagger) {
-          app.use(item);
-        }
+        configWithDefaults.customMiddleware.beforeSwagger.forEach( (item) => app.use(item));
 
         // Swagger-tools middleware
         app.use(middleware.swaggerMetadata());
@@ -141,9 +137,7 @@ async function startSkeletonApplication(options) {
         app.use(middleware.swaggerValidator());
         //app.use(swaggerErrorHandler());                       // Parameter validations (returns 400).
 
-        for (const item of configWithDefaults.customMiddleware.beforeController) {
-          app.use(item);
-        }
+        configWithDefaults.customMiddleware.beforeController.forEach( (item) => app.use(item));
 
         app.use(middleware.swaggerRouter({
           controllers: path.join(
@@ -156,9 +150,7 @@ async function startSkeletonApplication(options) {
         app.use(redirect(configWithDefaults.redirects));      // Redirect / to /docs
 
         // Custom middleware
-        for (const item of configWithDefaults.customMiddleware.afterSwagger) {
-          app.use(item);
-        }
+        configWithDefaults.customMiddleware.afterSwagger.forEach( (item) => app.use(item));
 
         app.use(errorHandler());                              // When there's an exception (returns 500).
         app.use(swaggerErrorHandler());                       // Parameter validations (returns 400).
@@ -176,6 +168,10 @@ async function startSkeletonApplication(options) {
       });
 
       return Promise.resolve(app);
+    })
+    .catch( (error) => {
+      console.error(error);
+      return Promise.reject(error);
     })
   );
 }
