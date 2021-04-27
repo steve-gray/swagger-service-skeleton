@@ -4,7 +4,7 @@
 const {expect} = require('chai');
 const glob = require('glob');
 const request = require('supertest');
-const asDump = require('./async-dump');
+// const asDump = require('./async-dump');
 const skeleton = require('../src');
 
 // chai.use(cap);
@@ -15,21 +15,15 @@ describe('Unit Tests', () => {
   //  asDump.asyncDump();
   //});
 
-  describe.only('Standard Cases', () => {
+  describe('Standard Cases', () => {
     let instance = null;
     let preCount = 0;
     let beforeControllerCount = 0;
     let postCount = 0;
 
-    beforeEach( async () => {
+    before( async () => {
       return new Promise((resolve, reject) => {
-        preCount = 0;
-        beforeControllerCount = 0;
-        postCount = 0;
         const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
-
-        // console.log('Current directory: ' + process.cwd());
-        // console.log('swaggerFileName : ' + swaggerFileName);
 
         instance = skeleton({
           ioc: {
@@ -67,10 +61,22 @@ describe('Unit Tests', () => {
             listenPort: 0,
             hostName: "localhost",
           },
+          exegesisOptions: {
+            authenticators: {
+              // Both not used in OpenAPI, but can be enabled for testing...
+              // sessionKey: sessionAuthenticator,
+              // addBasicAuth() {
+              //   return [];
+              // },
+              addOauth2() {
+                return { type: 'success', user: 'benbria', scopes: ['readOnly'] };
+              },
+            },
+          }
         })
         .then( (app) => {
           instance = app;
-          return resolve();
+          resolve();
         })
         .catch( (error) => {
           // throw new Error(error);
@@ -79,17 +85,24 @@ describe('Unit Tests', () => {
       });
     });
 
-    afterEach(() => {
+    beforeEach( () => {
+        preCount = 0;
+        beforeControllerCount = 0;
+        postCount = 0;
+        return Promise.resolve();
+      });
+
+    after( () => {
       instance.close();
+      return Promise.resolve();
     });
 
-    it('Should handle requests', (done) => {
+    it('Should handle requests', () => {
       // Start up, shut down
-      done();
+      return Promise.resolve();
     });
 
     it('Should be able to add', () => {
-      // console.log('Current directory: ' + process.cwd());
       return request(instance)
         .get('/add/4/5')
         .set('Accept', 'application/json')
@@ -116,8 +129,8 @@ describe('Unit Tests', () => {
         })
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
-          expect(beforeControllerCount).to.be.eql(1, 'Before controller hits');
-          expect(postCount).to.be.eql(1, 'Post Middleware hits');
+          expect(beforeControllerCount).to.be.eql(0, 'Before controller hits');
+          expect(postCount).to.be.eql(0, 'Post Middleware hits');
         })
     );
 
@@ -127,13 +140,21 @@ describe('Unit Tests', () => {
         .expect(404)
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
+          expect(beforeControllerCount).to.be.eql(1, 'Before controller hits');
           expect(postCount).to.be.eql(1, 'Post Middleware hits');
+          return Promise.resolve();
         }));
 
     it('Should redirect by default from /', () =>
       request(instance)
         .get('/')
         .expect(301)
+        .then(() => {
+          expect(preCount).to.be.eql(1, 'Pre Middleware hits');
+          expect(beforeControllerCount).to.be.eql(1, 'Before controller hits');
+          expect(postCount).to.be.eql(0, 'Post Middleware hits');
+          return Promise.resolve();
+        })
     );
 
     it('Should 404 for bad URL by default', () =>
@@ -179,7 +200,6 @@ describe('Unit Tests', () => {
         beforeControllerCount = 0;
         postCount = 0;
         const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
-        // console.log('swaggerFileName : ' + swaggerFileName);
 
         instance = skeleton({
           ioc: {
@@ -217,6 +237,18 @@ describe('Unit Tests', () => {
             listenPort: 0,
             hostName: "127.0.0.1",
           },
+          exegesisOptions: {
+            authenticators: {
+              // Both not used in OpenAPI, but can be enabled for testing...
+              // sessionKey: sessionAuthenticator,
+              // addBasicAuth() {
+              //   return [];
+              // },
+              addOauth2() {
+                return { type: 'success', user: 'benbria', scopes: ['readOnly'] };
+              },
+            },
+          }
         })
         .then( (app) => {
           instance = app;
@@ -259,6 +291,7 @@ describe('Unit Tests', () => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
           expect(beforeControllerCount).to.be.eql(1, 'Before controller hits');
           expect(postCount).to.be.eql(1, 'Post Middleware hits');
+          return Promise.resolve();
         });
     });
 
@@ -269,6 +302,7 @@ describe('Unit Tests', () => {
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
           expect(postCount).to.be.eql(1, 'Post Middleware hits');
+          return Promise.resolve();
         }));
 
     it('Should redirect by default from /', () =>
@@ -313,7 +347,19 @@ describe('Unit Tests', () => {
     describe('service.swagger = object', () => {
       let instance = null;
       const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
-      // console.log('swaggerFileName : ' + swaggerFileName);
+
+      // eslint-disable-next-line no-unused-vars
+      // async function sessionAuthenticator(pluginContext, info) {
+      //   const session = pluginContext.req.headers.session;
+      //   if (!session) {
+      //     return { type: 'missing', statusCode: 401, message: 'Session key required' };
+      //   } else if (session === 'secret') {
+      //     return { type: 'success', user: { name: 'jwalton', roles: ['read', 'write'] } };
+      //   }
+
+      //   // Session was supplied, but it's invalid.
+      //   return { type: 'invalid', statusCode: 401, message: 'Invalid session key' };
+      // }
 
       beforeEach(() => {
         return new Promise((resolve, reject) => {
@@ -333,6 +379,20 @@ describe('Unit Tests', () => {
               listenPort: 0,
               hostName: "localhost",
             },
+            exegesisOptions: {
+              allowMissingControllers: false,
+              controllersPattern: "**/*.@(ts|js)",
+              authenticators: {
+                // Both not used in OpenAPI, but can be enabled for testing...
+                // sessionKey: sessionAuthenticator,
+                // addBasicAuth() {
+                //   return [];
+                // },
+                addOauth2() {
+                  return { type: 'success', user: 'benbria', scopes: ['readOnly'] };
+                },
+              },
+            }
           })
           .then( (app) => {
             instance = app;
@@ -362,5 +422,82 @@ describe('Unit Tests', () => {
             result: 9,
           }));
     });
- });
+  });
+
+  describe('Check OAS token verification handling', () => {
+    let instance = null;
+
+    beforeEach(() => {
+      return new Promise((resolve, reject) => {
+        const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
+
+        instance = skeleton({
+          ioc: {
+            autoRegister: { pattern: './services/**/*.js', rootDirectory: __dirname },
+          },
+          codegen: {
+            templateSettings: {
+              implementationPath: '../../controllers',
+            },
+            temporaryDirectory: './tests/.temp',
+            oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory
+          },
+          service: {
+            swagger: swaggerFileName,
+            listenPort: 0,
+            hostName: "127.0.0.1",
+          },
+          exegesisOptions: {
+            authenticators: {
+              // Both not used in OpenAPI, but can be enabled for testing...
+              // sessionKey: sessionAuthenticator,
+              // addBasicAuth() {
+              //   return [];
+              // },
+              addOauth2() {
+                return { type: 'success', user: 'benbria', scopes: ['readOnly'] };
+              },
+            },
+          }
+        })
+        .then( (app) => {
+          instance = app;
+          resolve();
+        })
+        .catch( (err) => {
+          reject(err);
+        });
+      });
+    });
+
+    afterEach(() => {
+      instance.close();
+    });
+
+    it('Should load swaggerfile from object if not a string', () => {
+      // If we get here, we win.
+    });
+
+    it('Should be able to add', () =>
+    request(instance)
+      .get('/add/4/5')
+      .expect(200, {
+        x: 4,
+        y: 5,
+        operation: 'add',
+        result: 9,
+      })
+    );
+
+    it('Should be able to addProtected', () =>
+    request(instance)
+      .get('/addProtected/4/5')
+      .expect(200, {
+        x: 4,
+        y: 5,
+        operation: 'add',
+        result: 9,
+      })
+    );
+  });
 });

@@ -11,7 +11,7 @@ servers:
 
 paths:
   "/add/{x}/{y}":
-    x-swagger-router-controller: math
+    x-exegesis-controller: math
     get:
       summary: Get the sum of two numbers.
       description: X + Y = JSON
@@ -54,6 +54,54 @@ paths:
             "*/*":
               schema:
                 $ref: "#/components/schemas/ExceptionResponse"
+  "/addProtected/{x}/{y}":
+    x-exegesis-controller: math
+    get:
+      summary: Get the sum of two numbers.
+      description: X + Y = JSON
+      operationId: addProtected
+      security:
+#        - addBasicAuth: []
+        - addOauth2: ['readOnly']
+      parameters:
+        - name: x
+          description: Left operand
+          in: path
+          required: true
+          schema:
+            type: number
+        - name: y
+          description: Left operand
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: The product of numbers.
+          x-gulp-swagger-codegen-outcome: success
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/BinaryResult"
+        '400':
+          description: Bad request
+          x-gulp-swagger-codegen-outcome: badRequestError
+        '405':
+          description: Bad input data
+          x-gulp-swagger-codegen-outcome: badInputError
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/ExceptionResponse"
+        "500":
+          x-gulp-swagger-codegen-outcome: error
+          description: Error
+          content:
+            "*/*":
+              schema:
+                $ref: "#/components/schemas/ExceptionResponse"
+
 
 components:
   schemas:
@@ -112,3 +160,19 @@ components:
         detail:
           description: Error detail. Only returned if service is in diagnostic mode.
           type: string
+  securitySchemes:
+    # Commented out, but can be used for testing if needed
+    # addBasicAuth:
+    #   type: http
+    #   scheme: basic
+    addOauth2:
+      type: oauth2
+      description: A request with an oauth token.
+      flows:
+        #implicit:
+        authorizationCode:
+        #password:
+          authorizationUrl: 'https://localhost:9443/oauth2/authorize'
+          tokenUrl: 'http://localhost:9443/oauth2/token'
+          scopes:
+            readOnly: "Read only scope."

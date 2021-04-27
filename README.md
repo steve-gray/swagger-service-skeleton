@@ -149,6 +149,12 @@ The example below shows a complete-configuration for using the library, with typ
 For a more detailed tutorial please see the following GitHub repo:
     <https://github.com/fastbean-au/swagger-service-skeleton-tutorial>
 
+## Update from previous swagger-codegen
+
+The following are the changes required:
+- In your OpenAPI yaml file repalce 'x-swagger-router-controller' with 'x-exegesis-controller'.
+- Upgrade your swagger yaml file to an OpenAPI yaml file (V2 to V3).
+
 ## See Also
 
 The following projects are useful reading:
@@ -156,10 +162,6 @@ The following projects are useful reading:
     - swagger-codegen
         - Code generation using handlebars templates for swagger
           API contracts.
-    - gulp-swagger-codgen
-        - Leverages swagger-codegen and templatesets to produce
-          code output. This module does the same, but on the fly
-          when starting up to a temporary directory.
     - somersault
         - IoC for Node.js projects, with support for ES6 classes,
           arrow functions, static objects and regular functions.

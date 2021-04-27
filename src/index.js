@@ -10,14 +10,14 @@ const defaults = require('defaults-deep');
 const Enforcer = require('openapi-enforcer');
 const fiddleware = require('fiddleware');
 const fs = require('fs');
-const oasTools  = require('oas-tools');
 const mkdirp = require('mkdirp');
 const path = require('path');
 const query = require('connect-query');
 const templates = require('swagger-codegen').oas3_templates;
 const yamljs = require('yamljs');
-const swaggerErrorHandler = require('./middleware/swagger-error-handler');
-const errorHandler = require('./middleware/error-handler');
+// https://github.com/exegesis-js/exegesis-express
+const exegesisExpress   = require('exegesis-express');
+const unexpectedErrorHandler = require('./middleware/unexpected-error-handler');
 const redirect = require('./middleware/redirect-handler');
 
 /**
@@ -50,8 +50,9 @@ function generateApplicationCode(swagger, codegenOptions) {
  */
 async function startSkeletonApplication(options) {
   debug('Starting to create application skeleton');
-  const configWithDefaults = defaults(
-    options, {
+  let configWithDefaults_A = defaults(
+    options,
+    {
       redirects: {
         'documentation-from-root': {
           match: /^\/$/,
@@ -76,7 +77,25 @@ async function startSkeletonApplication(options) {
       },
       cors: {
       },
-    });
+      exegesisOptions: {
+        // See https://github.com/exegesis-js/exegesis/blob/master/docs/Options.md
+        allowMissingControllers: false,
+        controllersPattern: "**/*.@(ts|js)",
+        authenticators: {
+        }
+      }
+    }
+  );
+  const controllerPath = path.join(process.cwd(), configWithDefaults_A.codegen.temporaryDirectory, configWithDefaults_A.codegen.oas_controllerFolder);
+  let configWithDefaults = defaults(
+    configWithDefaults_A,
+    {
+      exegesisOptions: {
+        // See https://github.com/exegesis-js/exegesis/blob/master/docs/Options.md
+        controllers: controllerPath
+      }
+    }
+  );
 
   // If the swagger input is a string, then load it as a filename
   const swaggerFile = configWithDefaults.service.swagger;
@@ -92,88 +111,107 @@ async function startSkeletonApplication(options) {
     configWithDefaults.codegen
   );
 
-  const options_object = {
-    controllers: path.join(process.cwd(), configWithDefaults.codegen.temporaryDirectory, configWithDefaults.codegen.oas_controllerFolder),
-    loglevel: 'debug',
-    strict: false,
-    router: true,
-    validator: true    // DO NOT set to FALSE with express!!!!!!
-  };
-
   // DO NOT use the following as the checks  will pass BAD openAPI files!!!!
-  // oasTools.init_checks(swagger, initcheckFakeCallback);
-  // const SwaggerParser =  require('@apidevtools/swagger-parser');
-  return (
-    Enforcer(swaggerFile, { fullResult: true })
+  // BAD: oasTools.init_checks(swagger, initcheckFakeCallback);
+  // BAD: const SwaggerParser =  require('@apidevtools/swagger-parser');
+  return Enforcer(swaggerFile, { fullResult: true })
     .then(({ error, warning }) => {
         if (!error) {
             if (warning) {
+              // eslint-disable-next-line no-console
               console.warn(warning);
             } else {
-              console.log('No errors with your document');
+              // eslint-disable-next-line no-console
+              debug('No errors with your document');
             }
         } else {
+            // eslint-disable-next-line no-console
             console.error(error);
             throw new Error(error);
         }
     })
-    .then( () => {
-      oasTools.configure(options_object);
+    .then( async () => {
+      const exegesisMiddleware = await exegesisExpress.middleware( swaggerFile, configWithDefaults.exegesisOptions);
 
-      oasTools.initializeMiddleware(swagger, app, (middleware) => {
-        // Pre-request handling middleware
-        app.use(query());                                    // Query-string parsing
-        app.use(fiddleware.respondJson());                   // res.json(data, status) support.
-        app.use(ioc.middleware);                             // Somersault IoC for controllers.
-        app.use(cors(configWithDefaults.cors));              // Cross-origin
-        app.use(cookieParser());
+      //  ====================================================================================
 
-        // Custom middleware
-        configWithDefaults.customMiddleware.beforeSwagger.forEach( (item) => app.use(item));
+      // Pre-request handling middleware
+      app.use(query());                                 // Query-string parsing
+      app.use(fiddleware.respondJson());                   // res.json(data, status) support.
+      app.use(ioc.middleware);                             // Somersault IoC for controllers.
+      app.use(cors(configWithDefaults.cors));              // Cross-origin
+      app.use(cookieParser());
 
-        // Swagger-tools middleware
-        app.use(middleware.swaggerMetadata());
-        //app.use(errorHandler());                              // When there's an exception (returns 500).
-        app.use(middleware.swaggerValidator());
-        //app.use(swaggerErrorHandler());                       // Parameter validations (returns 400).
+      //  ====================================================================================
 
-        configWithDefaults.customMiddleware.beforeController.forEach( (item) => app.use(item));
+      // Custom middleware
+      configWithDefaults.customMiddleware.beforeSwagger.forEach( (item) => app.use(item));
 
-        app.use(middleware.swaggerRouter({
-          controllers: path.join(
-            configWithDefaults.codegen.temporaryDirectory,
-            configWithDefaults.codegen.controllerStubFolder),
-        }));
-        app.use(middleware.swaggerUi());
+      app.use(exegesisMiddleware);
 
-        // Post-request handling middleware
-        app.use(redirect(configWithDefaults.redirects));      // Redirect / to /docs
+      // Swagger-tools middleware
+      // app.use(middleware.swaggerMetadata());
+      // app.use(middleware.swaggerValidator());
 
-        // Custom middleware
-        configWithDefaults.customMiddleware.afterSwagger.forEach( (item) => app.use(item));
+      configWithDefaults.customMiddleware.beforeController.forEach( (item) => app.use(item));
 
-        app.use(errorHandler());                              // When there's an exception (returns 500).
-        app.use(swaggerErrorHandler());                       // Parameter validations (returns 400).
+      // app.use(middleware.swaggerRouter({
+      //   controllers: path.join(
+      //     configWithDefaults.codegen.temporaryDirectory,
+      //     configWithDefaults.codegen.controllerStubFolder),
+      // }));
+      // app.use(middleware.swaggerUi());
 
-        debug(`server app.listen() listenPort =  ${configWithDefaults.service.listenPort}, hostName =  ${configWithDefaults.service.hostName ? configWithDefaults.service.hostName : null} )`);
-        const server = app.listen(configWithDefaults.service.listenPort, configWithDefaults.service.hostName ? configWithDefaults.service.hostName : null);
-        //if (server.listening){
-          app.close = function closeServer() {
-            server.close();
-          };
-        // } else {
-        //  debug(`listenPort ${configWithDefaults.service.listenPort} in use!!!`);
-        //  throw new TypeError(`Express server cannot bind to port ${configWithDefaults.service.listenPort} as it is in use!!!`);
-        // }
+      // Post-request handling middleware
+      app.use(redirect(configWithDefaults.redirects));      // Redirect / to /docs
+
+      // Custom middleware
+      configWithDefaults.customMiddleware.afterSwagger.forEach( (item) => app.use(item));
+
+      //  ====================================================================================
+
+      // Return a 404
+      app.use((req, res) => {
+        res.status(404).json({message: `Not found`});
       });
 
-      return Promise.resolve(app);
+      // Handle any unexpected errors
+      app.use(unexpectedErrorHandler());   // Parameter validations (returns 400).
+
+      //  ====================================================================================
+
+      debug(`server app.listen() listenPort =  ${configWithDefaults.service.listenPort}, hostName =  ${configWithDefaults.service.hostName ? configWithDefaults.service.hostName : null} )`);
+      const server = app.listen(configWithDefaults.service.listenPort, configWithDefaults.service.hostName ? configWithDefaults.service.hostName : null, () => {
+        debug(`server ready`);
+      });
+      // if (!server.listening){
+      //  debug(`listenPort ${configWithDefaults.service.listenPort} in use!!!`);
+      //  throw new TypeError(`Express server cannot bind to port ${configWithDefaults.service.listenPort} as it is in use!!!`);
+      // }
+      let timeoutId;
+      let intervalId;
+      return new Promise((resolve, reject) => {
+          // Wait up to 1000 ms for express to startup correctly!!!!
+        timeoutId = setTimeout(() => {
+          clearInterval(intervalId);
+          reject(server);
+        }, 10000);
+
+        intervalId = setInterval( () => {
+          if (server.listening) {
+            clearTimeout(timeoutId);
+            clearInterval(intervalId);
+            resolve(server);
+          }
+        }, 50);
+      });
     })
     .catch( (error) => {
+      // eslint-disable-next-line no-console
       console.error(error);
-      return Promise.reject(error);
-    })
-  );
+      throw new Error(error);
+    });
+  // );
 }
 
 module.exports = startSkeletonApplication;

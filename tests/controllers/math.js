@@ -2,7 +2,8 @@
 
 class MathController {
 
-  add(x, y, responder) {
+  // eslint-disable-next-line no-unused-vars
+  add(x, y, responder, context) {
     if (x === 0 && y === 0) {
       return responder.error({
         errorCode: 500,
@@ -36,6 +37,12 @@ class MathController {
       result: x + y,
     });
   }
+
+  // eslint-disable-next-line no-unused-vars
+  addProtected(x, y, responder, context) {
+    return this.add(x, y, responder);
+  }
+
 }
 
 module.exports = MathController;
