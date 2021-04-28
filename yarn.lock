@@ -6408,9 +6408,9 @@ sver-compat@^1.5.0:
     es6-iterator "^2.0.1"
     es6-symbol "^3.1.1"
 
-"swagger-codegen@file:./swagger-codegen-v0.3.1-beta.1.tgz":
-  version "0.3.1-beta.1"
-  resolved "file:./swagger-codegen-v0.3.1-beta.1.tgz#757afb29a6b056792032ee644b345d4043e42468"
+"swagger-codegen@file:./swagger-codegen-v0.3.1-beta.2.tgz":
+  version "0.3.1-beta.2"
+  resolved "file:./swagger-codegen-v0.3.1-beta.2.tgz#9b5909d99297f7e7c6958294b1b15c804f586ce2"
   dependencies:
     debug "^4.3.1"
     defaults-deep "^0.2.4"

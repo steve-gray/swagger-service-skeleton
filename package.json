@@ -1,6 +1,6 @@
 {
   "name": "swagger-service-skeleton",
-  "version": "2.1.0-beta.0",
+  "version": "2.1.0-beta.1",
   "description": "Rapid service-skeleton/prototyping solution for NodeJS/OpenAPI based Microservices.",
   "main": "src/index.js",
   "scripts": {
@@ -45,7 +45,7 @@
     "mkdirp": "^1.0.4",
     "openapi-enforcer": "^1.14.0",
     "somersault": "^1.3.0",
-    "swagger-codegen": "file:.//swagger-codegen-v0.3.1-beta.1.tgz",
+    "swagger-codegen": "file:.//swagger-codegen-v0.3.1-beta.2.tgz",
     "yamljs": "^0.3.0"
   },
   "swagger-codegen_orig": "https://github.com/acotty/swagger-codegen/releases/download/v0.3.0-beta.4/swagger-codegen-v0.3.0-beta.4.tgz",

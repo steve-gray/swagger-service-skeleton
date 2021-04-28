@@ -52,3 +52,6 @@ jspm_packages
 dist
 coverage
 tests/.temp
+
+# Local testing packages
+*.tgz
