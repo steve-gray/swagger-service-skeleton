@@ -128,4 +128,4 @@ gulp.task('lint', () => {
     .pipe(eslint.failAfterError());
 });
 
-gulp.task('default', gulp.series('docs', 'lint'));
+gulp.task('default', gulp.series('clean', 'lint', 'docs'));

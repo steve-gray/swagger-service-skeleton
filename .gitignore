@@ -54,4 +54,4 @@ coverage
 tests/.temp
 
 # Local testing packages
-*.tgz
+# *.tgz
