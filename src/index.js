@@ -17,6 +17,7 @@ const templates = require('swagger-codegen').oas3_templates;
 const yamljs = require('yamljs');
 // https://github.com/exegesis-js/exegesis-express
 const exegesisExpress   = require('exegesis-express');
+const exegesisSwaggerUIPlugin = require('exegesis-plugin-swagger-ui-express');
 const unexpectedErrorHandler = require('./middleware/unexpected-error-handler');
 const redirect = require('./middleware/redirect-handler');
 
@@ -50,13 +51,14 @@ function generateApplicationCode(swagger, codegenOptions) {
  */
 async function startSkeletonApplication(options) {
   debug('Starting to create application skeleton');
-  let configWithDefaults_A = defaults(
+
+  let configWithDefaults = defaults(
     options,
     {
       redirects: {
         'documentation-from-root': {
           match: /^\/$/,
-          target: '/docs',
+          target: '/API_docs',
         },
       },
       ioc: {
@@ -64,7 +66,7 @@ async function startSkeletonApplication(options) {
       customMiddleware: {
         beforeSwagger: [],
         afterSwagger: [],
-        beforeController: [],
+        errorProcessingNoRoute: [],
       },
       codegen: {
         controllerStubFolder: 'controllers',
@@ -77,26 +79,8 @@ async function startSkeletonApplication(options) {
       },
       cors: {
       },
-      exegesisOptions: {
-        // See https://github.com/exegesis-js/exegesis/blob/master/docs/Options.md
-        allowMissingControllers: false,
-        controllersPattern: "**/*.@(ts|js)",
-        authenticators: {
-        }
-      }
     }
   );
-  const controllerPath = path.join(process.cwd(), configWithDefaults_A.codegen.temporaryDirectory, configWithDefaults_A.codegen.oas_controllerFolder);
-  let configWithDefaults = defaults(
-    configWithDefaults_A,
-    {
-      exegesisOptions: {
-        // See https://github.com/exegesis-js/exegesis/blob/master/docs/Options.md
-        controllers: controllerPath
-      }
-    }
-  );
-
   // If the swagger input is a string, then load it as a filename
   const swaggerFile = configWithDefaults.service.swagger;
   const swagger = typeof swaggerFile === 'string' ? yamljs.load(swaggerFile) : swaggerFile;
@@ -131,8 +115,6 @@ async function startSkeletonApplication(options) {
         }
     })
     .then( async () => {
-      const exegesisMiddleware = await exegesisExpress.middleware( swaggerFile, configWithDefaults.exegesisOptions);
-
       //  ====================================================================================
 
       // Pre-request handling middleware
@@ -147,36 +129,52 @@ async function startSkeletonApplication(options) {
       // Custom middleware
       configWithDefaults.customMiddleware.beforeSwagger.forEach( (item) => app.use(item));
 
+      //  ====================================================================================
+
+      const controllerPath = path.join(process.cwd(), configWithDefaults.codegen.temporaryDirectory, configWithDefaults.codegen.oas_controllerFolder);
+      let configExegesisWithDefaultsOptions = defaults(
+        configWithDefaults.exegesisOptions,
+        {
+          // See https://github.com/exegesis-js/exegesis/blob/master/docs/Options.md
+          allowMissingControllers: false,
+          controllersPattern: "**/*.@(ts|js)",
+          controllers: controllerPath,
+          authenticators: {
+          },
+          plugins: [
+            exegesisSwaggerUIPlugin({
+                // Express app (required)
+                app,
+
+                // URL path to expose API docs (default /)
+                path: '/API_docs',
+
+                // Options to pass to Swagger UI
+                swaggerUIOptions: {
+                   explorer: true
+                }
+            })
+          ]
+        }
+      );
+      const exegesisMiddleware = await exegesisExpress.middleware( swaggerFile, configExegesisWithDefaultsOptions);
       app.use(exegesisMiddleware);
 
-      // Swagger-tools middleware
-      // app.use(middleware.swaggerMetadata());
-      // app.use(middleware.swaggerValidator());
-
-      configWithDefaults.customMiddleware.beforeController.forEach( (item) => app.use(item));
-
-      // app.use(middleware.swaggerRouter({
-      //   controllers: path.join(
-      //     configWithDefaults.codegen.temporaryDirectory,
-      //     configWithDefaults.codegen.controllerStubFolder),
-      // }));
-      // app.use(middleware.swaggerUi());
-
-      // Post-request handling middleware
-      app.use(redirect(configWithDefaults.redirects));      // Redirect / to /docs
+      //  ====================================================================================
 
       // Custom middleware
       configWithDefaults.customMiddleware.afterSwagger.forEach( (item) => app.use(item));
 
+      // Post-request handling middleware
+      app.use(redirect(configWithDefaults.redirects));      // Redirect / to /docs
+
       //  ====================================================================================
 
-      // Return a 404
-      app.use((req, res) => {
-        res.status(404).json({message: `Not found`});
-      });
+      // Custom error procesing
+      configWithDefaults.customMiddleware.errorProcessingNoRoute.forEach( (item) => app.use(item));
 
       // Handle any unexpected errors
-      app.use(unexpectedErrorHandler());   // Parameter validations (returns 400).
+      app.use(unexpectedErrorHandler());   // Parameter validations (returns 500).
 
       //  ====================================================================================
 
@@ -188,20 +186,24 @@ async function startSkeletonApplication(options) {
       //  debug(`listenPort ${configWithDefaults.service.listenPort} in use!!!`);
       //  throw new TypeError(`Express server cannot bind to port ${configWithDefaults.service.listenPort} as it is in use!!!`);
       // }
+      app.close = function closeServer() {
+        server.close();
+      };
+
       let timeoutId;
       let intervalId;
       return new Promise((resolve, reject) => {
           // Wait up to 1000 ms for express to startup correctly!!!!
         timeoutId = setTimeout(() => {
           clearInterval(intervalId);
-          reject(server);
+          reject(new Error("Server did not startup within timeout period."));
         }, 10000);
 
         intervalId = setInterval( () => {
           if (server.listening) {
             clearTimeout(timeoutId);
             clearInterval(intervalId);
-            resolve(server);
+            resolve(app);
           }
         }, 50);
       });

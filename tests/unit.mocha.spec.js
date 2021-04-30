@@ -1,5 +1,9 @@
 'use strict';
 
+// process.env.NODE_ENV = 'development';
+// process.env.DEBUG='*';
+// process.env.DEBUG='express:application';
+
 // const cap = require('chai-as-promised');
 const {expect} = require('chai');
 const glob = require('glob');
@@ -18,7 +22,6 @@ describe('Unit Tests', () => {
   describe('Standard Cases', () => {
     let instance = null;
     let preCount = 0;
-    let beforeControllerCount = 0;
     let postCount = 0;
 
     before( async () => {
@@ -40,12 +43,6 @@ describe('Unit Tests', () => {
             beforeSwagger: [
               (req, res, next) => {
                 preCount += 1;
-                next();
-              },
-            ],
-            beforeController: [
-              (req, res, next) => {
-                beforeControllerCount += 1;
                 next();
               },
             ],
@@ -87,7 +84,6 @@ describe('Unit Tests', () => {
 
     beforeEach( () => {
         preCount = 0;
-        beforeControllerCount = 0;
         postCount = 0;
         return Promise.resolve();
       });
@@ -129,7 +125,6 @@ describe('Unit Tests', () => {
         })
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
-          expect(beforeControllerCount).to.be.eql(0, 'Before controller hits');
           expect(postCount).to.be.eql(0, 'Post Middleware hits');
         })
     );
@@ -140,7 +135,6 @@ describe('Unit Tests', () => {
         .expect(404)
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
-          expect(beforeControllerCount).to.be.eql(1, 'Before controller hits');
           expect(postCount).to.be.eql(1, 'Post Middleware hits');
           return Promise.resolve();
         }));
@@ -151,8 +145,7 @@ describe('Unit Tests', () => {
         .expect(301)
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
-          expect(beforeControllerCount).to.be.eql(1, 'Before controller hits');
-          expect(postCount).to.be.eql(0, 'Post Middleware hits');
+          expect(postCount).to.be.eql(1, 'Post Middleware hits');
           return Promise.resolve();
         })
     );
@@ -191,13 +184,11 @@ describe('Unit Tests', () => {
   describe('Standard Cases 127.0.0.1 handling', () => {
     let instance = null;
     let preCount = 0;
-    let beforeControllerCount = 0;
     let postCount = 0;
 
-    beforeEach(() => {
+    before(() => {
       return new Promise((resolve, reject) => {
         preCount = 0;
-        beforeControllerCount = 0;
         postCount = 0;
         const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
 
@@ -216,12 +207,6 @@ describe('Unit Tests', () => {
             beforeSwagger: [
               (req, res, next) => {
                 preCount += 1;
-                next();
-              },
-            ],
-            beforeController: [
-              (req, res, next) => {
-                beforeControllerCount += 1;
                 next();
               },
             ],
@@ -260,7 +245,13 @@ describe('Unit Tests', () => {
       });
     });
 
-    afterEach(() => {
+    beforeEach( () => {
+      preCount = 0;
+      postCount = 0;
+      return Promise.resolve();
+    });
+
+    after(() => {
       instance.close();
     });
 
@@ -289,7 +280,6 @@ describe('Unit Tests', () => {
         })
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
-          expect(beforeControllerCount).to.be.eql(1, 'Before controller hits');
           expect(postCount).to.be.eql(1, 'Post Middleware hits');
           return Promise.resolve();
         });
@@ -361,7 +351,7 @@ describe('Unit Tests', () => {
       //   return { type: 'invalid', statusCode: 401, message: 'Invalid session key' };
       // }
 
-      beforeEach(() => {
+      before(() => {
         return new Promise((resolve, reject) => {
           instance = skeleton({
             ioc: {
@@ -404,7 +394,7 @@ describe('Unit Tests', () => {
         });
       });
 
-      afterEach(() => {
+      after(() => {
         instance.close();
       });
 
@@ -427,7 +417,7 @@ describe('Unit Tests', () => {
   describe('Check OAS token verification handling', () => {
     let instance = null;
 
-    beforeEach(() => {
+    before(() => {
       return new Promise((resolve, reject) => {
         const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
 
@@ -470,7 +460,7 @@ describe('Unit Tests', () => {
       });
     });
 
-    afterEach(() => {
+    after(() => {
       instance.close();
     });
 
@@ -499,5 +489,90 @@ describe('Unit Tests', () => {
         result: 9,
       })
     );
+  });
+
+  describe('Check SWAGGER UI handling', () => {
+    let instance = null;
+
+    before(() => {
+      return new Promise((resolve, reject) => {
+        const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
+
+        instance = skeleton({
+          ioc: {
+            autoRegister: { pattern: './services/**/*.js', rootDirectory: __dirname },
+          },
+          codegen: {
+            templateSettings: {
+              implementationPath: '../../controllers',
+            },
+            temporaryDirectory: './tests/.temp',
+            oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory
+          },
+          service: {
+            swagger: swaggerFileName,
+            listenPort: 0,
+            hostName: "localhost",
+          },
+          exegesisOptions: {
+            authenticators: {
+              // Both not used in OpenAPI, but can be enabled for testing...
+              // sessionKey: sessionAuthenticator,
+              // addBasicAuth() {
+              //   return [];
+              // },
+              addOauth2() {
+                return { type: 'success', user: 'benbria', scopes: ['readOnly'] };
+              },
+            },
+          }
+        })
+        .then( (app) => {
+          instance = app;
+          resolve();
+        })
+        .catch( (err) => {
+          reject(err);
+        });
+      });
+    });
+
+    after(() => {
+      instance.close();
+    });
+
+    it('Should load swaggerfile from object if not a string', () => {
+      // If we get here, we win.
+    });
+
+    it('Should be able to get Swagger UI doc page', () => {
+      request(instance)
+      .get( '/API_docs/' ) // MUST have / at the end!!!!!
+      .end( ( err, res ) => {
+        expect( err ).to.equal(null);
+        expect( res.text ).to.contain( '<title>Swagger UI</title>' );
+        expect( res.text ).to.contain( 'swagger-ui-standalone-preset.js' );
+      });
+    });
+
+    it('Should get 404 for wrong UTL for Swagger UI doc page', () => {
+      request(instance)
+      .get( '/API_docss' )
+      .expect(404)
+      .end( ( err, res ) => {
+        expect( err ).to.equal(null);
+        expect( res.text ).to.contain( 'Cannot GET /API_docss' );
+      });
+    });
+
+    it('Should be able to get Swagger UI doc page', () => {
+      request(instance)
+      .get( '/API_docs' )
+      .expect(301)
+      .end( ( err, res ) => {
+        expect( err ).to.equal(null);
+        expect( res.text ).to.contain( 'Redirecting to <a href=');
+      });
+    });
   });
 });
