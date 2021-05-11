@@ -48,10 +48,12 @@ jspm_packages
 # Visual Studio Code directory
 .vscode
 
+# Docker mapped Volumes
+DockerVolumes
+
 # application potential specific directories
 dist
 coverage
-tests/.temp
 
-# Local testing packages
-# *.tgz
+*.tgz
+

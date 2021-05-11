@@ -13,6 +13,9 @@
     "sourceType": "module"
   },  
   "extends": "airbnb",
+  "settings": { 
+    "react": { "version": "detect-silent" }
+  },
   "rules": {
     "generator-star-spacing": "off",
     "import/no-extraneous-dependencies": "off",

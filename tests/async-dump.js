@@ -1,5 +1,6 @@
 'use strict';
 
+/* eslint-disable no-console */
 const {createHook} = require('async_hooks');
 const {stackTraceFilter} = require('mocha/lib/utils');
 const allResources = new Map();

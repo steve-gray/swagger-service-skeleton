@@ -3,15 +3,13 @@
 // process.env.NODE_ENV = 'development';
 // process.env.DEBUG='*';
 // process.env.DEBUG='express:application';
+// process.env.DEBUG='*,express:*,swagger-service-skeleton:*';
 
-// const cap = require('chai-as-promised');
 const {expect} = require('chai');
 const glob = require('glob');
 const request = require('supertest');
 // const asDump = require('./async-dump');
 const skeleton = require('../src');
-
-// chai.use(cap);
 
 describe('Unit Tests', () => {
 
@@ -133,11 +131,12 @@ describe('Unit Tests', () => {
       request(instance)
         .get('/does-not-exist/4/5')
         .expect(404)
-        .then(() => {
+        .then((res) => {
+          expect(res.body.message).to.be.eql('Route Not found');
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
           expect(postCount).to.be.eql(1, 'Post Middleware hits');
-          return Promise.resolve();
-        }));
+        })
+    );
 
     it('Should redirect by default from /', () =>
       request(instance)
@@ -154,6 +153,9 @@ describe('Unit Tests', () => {
       request(instance)
         .get('/foobar')
         .expect(404)
+        .then((res) => {
+          expect(res.body.message).to.be.eql('Route Not found');
+        })
     );
 
     it('Should 400 when passed in bad parameters from controller', () =>
@@ -281,7 +283,6 @@ describe('Unit Tests', () => {
         .then(() => {
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
           expect(postCount).to.be.eql(1, 'Post Middleware hits');
-          return Promise.resolve();
         });
     });
 
@@ -289,10 +290,10 @@ describe('Unit Tests', () => {
       request(instance)
         .get('/does-not-exist/4/5')
         .expect(404)
-        .then(() => {
+        .then((res) => {
+          expect(res.body.message).to.be.eql('Route Not found');
           expect(preCount).to.be.eql(1, 'Pre Middleware hits');
           expect(postCount).to.be.eql(1, 'Post Middleware hits');
-          return Promise.resolve();
         }));
 
     it('Should redirect by default from /', () =>
@@ -305,6 +306,9 @@ describe('Unit Tests', () => {
       request(instance)
         .get('/foobar')
         .expect(404)
+        .then((res) => {
+          expect(res.body.message).to.be.eql('Route Not found');
+        })
     );
 
     it('Should 400 when passed in bad parameters from controller', () =>
@@ -559,9 +563,8 @@ describe('Unit Tests', () => {
       request(instance)
       .get( '/API_docss' )
       .expect(404)
-      .end( ( err, res ) => {
-        expect( err ).to.equal(null);
-        expect( res.text ).to.contain( 'Cannot GET /API_docss' );
+      .then( (res) => {
+        expect(res.body.message).to.be.eql('Route Not found');
       });
     });
 

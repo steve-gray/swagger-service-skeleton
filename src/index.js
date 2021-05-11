@@ -18,7 +18,7 @@ const yamljs = require('yamljs');
 // https://github.com/exegesis-js/exegesis-express
 const exegesisExpress   = require('exegesis-express');
 const exegesisSwaggerUIPlugin = require('exegesis-plugin-swagger-ui-express');
-const unexpectedErrorHandler = require('./middleware/unexpected-error-handler');
+const unhandledRouteErrorHandler = require('./middleware/unhandled-route-error-handler');
 const redirect = require('./middleware/redirect-handler');
 
 /**
@@ -66,7 +66,7 @@ async function startSkeletonApplication(options) {
       customMiddleware: {
         beforeSwagger: [],
         afterSwagger: [],
-        errorProcessingNoRoute: [],
+        processMissingRoute: [],
       },
       codegen: {
         controllerStubFolder: 'controllers',
@@ -170,11 +170,17 @@ async function startSkeletonApplication(options) {
 
       //  ====================================================================================
 
-      // Custom error procesing
-      configWithDefaults.customMiddleware.errorProcessingNoRoute.forEach( (item) => app.use(item));
+      // Custom missing route procesing
+      if (configWithDefaults.customMiddleware.processMissingRoute.length > 0) {
+      configWithDefaults.customMiddleware.processMissingRoute.forEach( (item) => app.use(item));
+      } else {
+        app.use((req, res) => {
+          res.status(404).json({message: `Route Not found`});
+      });
+      }
 
       // Handle any unexpected errors
-      app.use(unexpectedErrorHandler());   // Parameter validations (returns 500).
+      app.use(unhandledRouteErrorHandler());   // Route does not exit error handler
 
       //  ====================================================================================
 
