@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('swagger-service-skeleton:redirect-handler');
+const debug = require('debug')('openapi-service-skeleton:redirect-handler');
 
 module.exports = (redirectMap) =>
   (req, res, next) => {

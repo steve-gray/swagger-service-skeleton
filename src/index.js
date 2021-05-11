@@ -1,11 +1,11 @@
 'use strict';
 
-const codegen = require('swagger-codegen').generateCode;
+const codegen = require('openapi-code-generator').generateCode;
 const cookieParser = require('cookie-parser');
 const express  = require('express');
 const connectIoc = require('connect-ioc');
 const cors = require('cors');
-const debug = require('debug')('swagger-service-skeleton');
+const debug = require('debug')('openapi-service-skeleton');
 const defaults = require('defaults-deep');
 const Enforcer = require('openapi-enforcer');
 const fiddleware = require('fiddleware');
@@ -13,7 +13,7 @@ const fs = require('fs');
 const mkdirp = require('mkdirp');
 const path = require('path');
 const query = require('connect-query');
-const templates = require('swagger-codegen').oas3_templates;
+const templates = require('openapi-code-generator').oas3_templates;
 const yamljs = require('yamljs');
 // https://github.com/exegesis-js/exegesis-express
 const exegesisExpress   = require('exegesis-express');
@@ -24,7 +24,7 @@ const redirect = require('./middleware/redirect-handler');
 /**
  * Generate the application code in the specified temporary directory.
  */
-function generateApplicationCode(swagger, codegenOptions) {
+function generateApplicationCode(openapi, codegenOptions) {
   debug('Generating application code.');
 
   // Build up the execution parameters for the templates.
@@ -39,7 +39,7 @@ function generateApplicationCode(swagger, codegenOptions) {
         mkdirp.sync(parsed.dir);
         fs.writeFileSync(fullName, content);
       },
-      swagger: JSON.parse(JSON.stringify(swagger)), // Clone to avoid issues
+      openapi: JSON.parse(JSON.stringify(openapi)), // Clone to avoid issues
     });
 
   // Perform the actual code generation
@@ -64,8 +64,8 @@ async function startSkeletonApplication(options) {
       ioc: {
       },
       customMiddleware: {
-        beforeSwagger: [],
-        afterSwagger: [],
+        beforeOpenAPI: [],
+        afterOpenAPI: [],
         processMissingRoute: [],
       },
       codegen: {
@@ -81,9 +81,9 @@ async function startSkeletonApplication(options) {
       },
     }
   );
-  // If the swagger input is a string, then load it as a filename
-  const swaggerFile = configWithDefaults.service.swagger;
-  const swagger = typeof swaggerFile === 'string' ? yamljs.load(swaggerFile) : swaggerFile;
+  // If the openapiFile input is a string, then load it as a filename
+  const openapiFile = configWithDefaults.service.openapi;
+  const openapi = typeof openapiFile === 'string' ? yamljs.load(openapiFile) : openapiFile;
 
   // Create service instances
   const app = express();
@@ -91,14 +91,14 @@ async function startSkeletonApplication(options) {
 
   // Generate custom application code
   generateApplicationCode(
-    swagger,
+    openapi,
     configWithDefaults.codegen
   );
 
   // DO NOT use the following as the checks  will pass BAD openAPI files!!!!
   // BAD: oasTools.init_checks(swagger, initcheckFakeCallback);
   // BAD: const SwaggerParser =  require('@apidevtools/swagger-parser');
-  return Enforcer(swaggerFile, { fullResult: true })
+  return Enforcer(openapiFile, { fullResult: true })
     .then(({ error, warning }) => {
         if (!error) {
             if (warning) {
@@ -127,7 +127,7 @@ async function startSkeletonApplication(options) {
       //  ====================================================================================
 
       // Custom middleware
-      configWithDefaults.customMiddleware.beforeSwagger.forEach( (item) => app.use(item));
+      configWithDefaults.customMiddleware.beforeOpenAPI.forEach( (item) => app.use(item));
 
       //  ====================================================================================
 
@@ -157,13 +157,13 @@ async function startSkeletonApplication(options) {
           ]
         }
       );
-      const exegesisMiddleware = await exegesisExpress.middleware( swaggerFile, configExegesisWithDefaultsOptions);
+      const exegesisMiddleware = await exegesisExpress.middleware( openapiFile, configExegesisWithDefaultsOptions);
       app.use(exegesisMiddleware);
 
       //  ====================================================================================
 
       // Custom middleware
-      configWithDefaults.customMiddleware.afterSwagger.forEach( (item) => app.use(item));
+      configWithDefaults.customMiddleware.afterOpenAPI.forEach( (item) => app.use(item));
 
       // Post-request handling middleware
       app.use(redirect(configWithDefaults.redirects));      // Redirect / to /docs

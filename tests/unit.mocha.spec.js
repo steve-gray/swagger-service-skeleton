@@ -3,7 +3,7 @@
 // process.env.NODE_ENV = 'development';
 // process.env.DEBUG='*';
 // process.env.DEBUG='express:application';
-// process.env.DEBUG='*,express:*,swagger-service-skeleton:*';
+// process.env.DEBUG='*,express:*,openapi-service-skeleton:*';
 
 const {expect} = require('chai');
 const glob = require('glob');
@@ -24,7 +24,7 @@ describe('Unit Tests', () => {
 
     before( async () => {
       return new Promise((resolve, reject) => {
-        const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
+        const openapiFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
 
         instance = skeleton({
           ioc: {
@@ -38,13 +38,13 @@ describe('Unit Tests', () => {
             oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory
           },
           customMiddleware: {
-            beforeSwagger: [
+            beforeOpenAPI: [
               (req, res, next) => {
                 preCount += 1;
                 next();
               },
             ],
-            afterSwagger: [
+            afterOpenAPI: [
               (req, res, next) => {
                 postCount +=1;
                 next();
@@ -52,7 +52,7 @@ describe('Unit Tests', () => {
             ],
           },
           service: {
-            swagger: swaggerFileName,
+            openapi: openapiFileName,
             listenPort: 0,
             hostName: "localhost",
           },
@@ -110,7 +110,7 @@ describe('Unit Tests', () => {
         );
     });
 
-    it('Should run customMiddleware.beforeSwagger on match', () =>
+    it('Should run customMiddleware.beforeOpenAPI on match', () =>
       request(instance)
         .get('/add/4/5')
         .set('Accept', 'application/json')
@@ -127,7 +127,7 @@ describe('Unit Tests', () => {
         })
     );
 
-    it('Should run customMiddleware.afterSwagger too on error', () =>
+    it('Should run customMiddleware.afterOpenAPI too on error', () =>
       request(instance)
         .get('/does-not-exist/4/5')
         .expect(404)
@@ -192,7 +192,7 @@ describe('Unit Tests', () => {
       return new Promise((resolve, reject) => {
         preCount = 0;
         postCount = 0;
-        const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
+        const openapiFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
 
         instance = skeleton({
           ioc: {
@@ -206,13 +206,13 @@ describe('Unit Tests', () => {
             oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory
           },
           customMiddleware: {
-            beforeSwagger: [
+            beforeOpenAPI: [
               (req, res, next) => {
                 preCount += 1;
                 next();
               },
             ],
-            afterSwagger: [
+            afterOpenAPI: [
               (req, res, next) => {
                 postCount += 1;
                 next();
@@ -220,7 +220,7 @@ describe('Unit Tests', () => {
             ],
           },
           service: {
-            swagger: swaggerFileName,
+            openapi: openapiFileName,
             listenPort: 0,
             hostName: "127.0.0.1",
           },
@@ -271,7 +271,7 @@ describe('Unit Tests', () => {
           result: 9,
         }));
 
-    it('Should run customMiddleware.beforeSwagger on match', () => {
+    it('Should run customMiddleware.beforeOpenAPI on match', () => {
       request(instance)
         .get('/add/4/5')
         .expect(200, {
@@ -286,7 +286,7 @@ describe('Unit Tests', () => {
         });
     });
 
-    it('Should run customMiddleware.afterSwagger too on error', () =>
+    it('Should run customMiddleware.afterOpenAPI too on error', () =>
       request(instance)
         .get('/does-not-exist/4/5')
         .expect(404)
@@ -338,9 +338,9 @@ describe('Unit Tests', () => {
   });
 
   describe('Special input handling', () => {
-    describe('service.swagger = object', () => {
+    describe('service.openapi = object', () => {
       let instance = null;
-      const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
+      const openapiFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
 
       // eslint-disable-next-line no-unused-vars
       // async function sessionAuthenticator(pluginContext, info) {
@@ -369,7 +369,7 @@ describe('Unit Tests', () => {
               oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory
             },
             service: {
-              swagger: swaggerFileName,
+              openapi: openapiFileName,
               listenPort: 0,
               hostName: "localhost",
             },
@@ -402,7 +402,7 @@ describe('Unit Tests', () => {
         instance.close();
       });
 
-      it('Should load swaggerfile from object if not a string', () => {
+      it('Should load openapifile from object if not a string', () => {
         // If we get here, we win.
       });
 
@@ -423,7 +423,7 @@ describe('Unit Tests', () => {
 
     before(() => {
       return new Promise((resolve, reject) => {
-        const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
+        const openapiFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
 
         instance = skeleton({
           ioc: {
@@ -437,7 +437,7 @@ describe('Unit Tests', () => {
             oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory
           },
           service: {
-            swagger: swaggerFileName,
+            openapi: openapiFileName,
             listenPort: 0,
             hostName: "127.0.0.1",
           },
@@ -468,7 +468,7 @@ describe('Unit Tests', () => {
       instance.close();
     });
 
-    it('Should load swaggerfile from object if not a string', () => {
+    it('Should load openapifile from object if not a string', () => {
       // If we get here, we win.
     });
 
@@ -500,7 +500,7 @@ describe('Unit Tests', () => {
 
     before(() => {
       return new Promise((resolve, reject) => {
-        const swaggerFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
+        const openapiFileName = glob.sync('./tests/contracts/**/*oas3.yaml', {})[0];
 
         instance = skeleton({
           ioc: {
@@ -514,7 +514,7 @@ describe('Unit Tests', () => {
             oas_controllerFolder: './controllers',    // Relative to the temporaryDirectory
           },
           service: {
-            swagger: swaggerFileName,
+            openapi: openapiFileName,
             listenPort: 0,
             hostName: "localhost",
           },
@@ -545,7 +545,7 @@ describe('Unit Tests', () => {
       instance.close();
     });
 
-    it('Should load swaggerfile from object if not a string', () => {
+    it('Should load openapifile from object if not a string', () => {
       // If we get here, we win.
     });
 

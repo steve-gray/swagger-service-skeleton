@@ -32,23 +32,23 @@ paths:
       responses:
         "200":
           description: The product of numbers.
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             "*/*":
               schema:
                 $ref: "#/components/schemas/BinaryResult"
         '400':
           description: Bad request
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
         '405':
           description: Bad input data
-          x-gulp-swagger-codegen-outcome: badInputError
+          x-gulp-openapi-code-generator-outcome: badInputError
           content:
             "*/*":
               schema:
                 $ref: "#/components/schemas/ExceptionResponse"
         "500":
-          x-gulp-swagger-codegen-outcome: error
+          x-gulp-openapi-code-generator-outcome: error
           description: Error
           content:
             "*/*":
@@ -79,23 +79,23 @@ paths:
       responses:
         "200":
           description: The product of numbers.
-          x-gulp-swagger-codegen-outcome: success
+          x-gulp-openapi-code-generator-outcome: success
           content:
             "*/*":
               schema:
                 $ref: "#/components/schemas/BinaryResult"
         '400':
           description: Bad request
-          x-gulp-swagger-codegen-outcome: badRequestError
+          x-gulp-openapi-code-generator-outcome: badRequestError
         '405':
           description: Bad input data
-          x-gulp-swagger-codegen-outcome: badInputError
+          x-gulp-openapi-code-generator-outcome: badInputError
           content:
             "*/*":
               schema:
                 $ref: "#/components/schemas/ExceptionResponse"
         "500":
-          x-gulp-swagger-codegen-outcome: error
+          x-gulp-openapi-code-generator-outcome: error
           description: Error
           content:
             "*/*":

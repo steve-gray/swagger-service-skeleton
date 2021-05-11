@@ -1,13 +1,16 @@
-# swagger-service-skeleton
+# openapi-service-skeleton
 
-[![Prod Dependencies](https://david-dm.org/fastbean-au/swagger-service-skeleton/status.svg)](https://david-dm.org/fastbean-au/swagger-service-skeleton)
-[![Dev Dependencies](https://david-dm.org/fastbean-au/swagger-service-skeleton/dev-status.svg)](https://david-dm.org/fastbean-au/swagger-service-skeleton#info=devDependencies)
+[![Prod Dependencies](https://david-dm.org/acotty/openapi-service-skeleton/status.svg)](https://david-dm.org/acotty/openapi-service-skeleton)
+[![Dev Dependencies](https://david-dm.org/acotty/openapi-service-skeleton/dev-status.svg)](https://david-dm.org/acotty/openapi-service-skeleton#info=devDependencies)
+[![Build](https://github.com/acotty/openapi-service-skeleton/actions/workflows/node.js.yml/badge.svg)](https://github.com/acotty/openapi-service-skeleton/actions/workflows/node.js.yml)
 
 NPM package for rapidly spinning up REST service skeletons.
 
+NOTE: This reame.md has not been tripple checked, so please raise issues or PR's for changes/updates/clarifications.
+
 ## Status
 
-This repository/package has been forked from [steve-gray/swagger-service-skeleton](https://github.com/steve-gray/swagger-service-skeleton)
+This repository/package has been forked from [steve-gray/openapi-service-skeleton](https://github.com/steve-gray/openapi-service-skeleton)
 as it was not being maintained. The automated build pipelines have not yet been put in place, and dependencies are sorely out of date. At some point this may be rectified...until then, use cautiously.
 
 To use: follow the [instructions found here.](https://coderwall.com/p/q_gh-w/fork-and-patch-npm-moduels-hosted-on-github)
@@ -17,7 +20,7 @@ To use: follow the [instructions found here.](https://coderwall.com/p/q_gh-w/for
 The example below shows the minimal, happy-path configuration:
 
     'use strict';
-    const skeleton = require('swagger-service-skeleton');
+    const skeleton = require('openapi-service-skeleton');
     const instance = skeleton({
         ioc: {
             autoRegister: { pattern: './services/*.js', 
@@ -30,23 +33,23 @@ The example below shows the minimal, happy-path configuration:
             temporaryDirectory: './dist/codegen',
         },
         service: {
-            swagger: './contracts/your-service-api.yaml',
+            openapi: './contracts/your-service-api.yaml',
         }
     });
     module.exports = instance;
 
-Calling instance() will start up a complete service on port 10010 serving your swagger-API. It expects that  controller-implementations are located in ./src/controllers relative to your application root path.
+Calling instance() will start up a complete service on port 10010 serving your openapi-API. It expects that  controller-implementations are located in ./src/controllers relative to your application root path.
 
 ## Complete Configuration
 
 The example below shows a complete-configuration for using the library, with typical defaults specified. The only __required__ parameters are the ones in the minimal example above.
 
     'use strict';
-    const skeleton = require('swagger-service-skeleton');
+    const skeleton = require('openapi-service-skeleton');
     const yamljs = require('yamljs');
 
     const instance = skeleton({
-        // IOC Settings - See swagger-service-skeleton on NPM for more parameters
+        // IOC Settings - See openapi-service-skeleton on NPM for more parameters
         ioc: {
             // Automatically register services with the IoC Container
             autoRegister: {
@@ -62,24 +65,17 @@ The example below shows a complete-configuration for using the library, with typ
         // Custom middleware to run
         customMiddleware: {
             // Middleware to run after some essentials/setup
-            // but before the swagger-router.
-            beforeSwagger: [
+            // but before the openapi-router.
+            beforeOpenAPI: [
                 (req, res, next) => {
                   /* do something */
                   next();  
                 },
             ],
-            // Middleware to run after filtering, but immediately before the controller
-            beforeController: [
-                (err, req, res, next) => {
-                    /* Do something */
-                    next();
-                },
-            ],
-            // Middleware to run after swagger-router, if the
-            // request does not get handled by swagger (i.e.
-            // custom error handling)
-            afterSwagger: [
+            // Middleware to run after openapi-router, if the
+            // request does not get handled by OpenAPI middleware routes 
+            // (i.e. custom error handling)
+            afterOpenAPI: [
                 (err, req, res, next) => {
                     /* Do something */
                     next();
@@ -89,8 +85,8 @@ The example below shows a complete-configuration for using the library, with typ
 
         // Code generation 
         codegen: {
-            // swagger-codegen compliant template-set to use.
-            // Defaults to require('swagger-template-es6-server')
+            // openapi-code-generator compliant template-set to use.
+            // Defaults to require('openapi-code-generator').template
             templateSet: null,
 
             // Template-set specific settings, passed to template-set
@@ -101,12 +97,12 @@ The example below shows a complete-configuration for using the library, with typ
                 implementationPath: '../../../src/controllers',
             },
 
-            // Where swagger-codegen writes controller stubs to
+            // Where openapi-code-generator writes controller stubs to
             // Defaults to ./termp
             temporaryDirectory: './dist/codegen',
 
             // Path relative to temporaryDirectory where we can
-            // find swagger-tools compliant controllers. Typically
+            // find exegesis-express compliant controllers. Typically
             // this is 'controllers' or similar.
             controllerStubFolder: 'controllers'
         },
@@ -129,7 +125,7 @@ The example below shows a complete-configuration for using the library, with typ
             // Your service contract. Can be a .yaml file name
             // or a pre-parsed file. Will load text from file
             // using require('yamljs')
-            swagger: './contracts/your-service.yaml',
+            opeanapi: './contracts/your-service.yaml',
 
             // Port to listen on
             listenPort: 10010
@@ -147,23 +143,30 @@ The example below shows a complete-configuration for using the library, with typ
 ## More Detailied Tutorial
 
 For a more detailed tutorial please see the following GitHub repo:
-    <https://github.com/fastbean-au/swagger-service-skeleton-tutorial>
+    <https://github.com/fastbean-au/openapi-service-skeleton-tutorial>
 
-## Update from previous swagger-codegen
+## Update from previous swagger-codegen to openapi-code-generator
 
 The following are the changes required:
-- In your OpenAPI yaml file repalce 'x-swagger-router-controller' with 'x-exegesis-controller'.
+
+- In your OpenAPI yaml file replace as follows:
+
+|          Old Text                |                 New Text                |
+|----------------------------------|-----------------------------------------|
+|  'x-swagger-router-controller'   |           'x-exegesis-controller'       |
+| 'x-gulp-swagger-codegen-outcome' | 'x-gulp-openapi-code-generator-outcome' |
+
 - Upgrade your swagger yaml file to an OpenAPI yaml file (V2 to V3).
 
 ## See Also
 
 The following projects are useful reading:
 
-    - swagger-codegen
-        - Code generation using handlebars templates for swagger
-          API contracts.
+    - https://github.com/acotty/opeanapi-service-skeleton-tutorial
+        - Tutorial on how to use this package.
+    - openapi-code-generator
+        - Code generation using handlebars templates for swagger API ontracts.
     - somersault
-        - IoC for Node.js projects, with support for ES6 classes,
-          arrow functions, static objects and regular functions.
+        - IoC for Node.js projects, with support for ES6 classes, arrow functions, static objects and regular functions.
     - connect-ioc
         - Leverages somersault to provide per-request IoC support

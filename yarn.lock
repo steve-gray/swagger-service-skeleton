@@ -5061,6 +5061,16 @@ ono@^4.0.11:
   dependencies:
     format-util "^1.0.3"
 
+"openapi-code-generator@https://github.com/acotty/openapi-code-generator/releases/download/0.3.0-beta.1/openapi-code-generator-v0.3.0-beta.1.tgz":
+  version "0.3.0-beta.1"
+  resolved "https://github.com/acotty/openapi-code-generator/releases/download/0.3.0-beta.1/openapi-code-generator-v0.3.0-beta.1.tgz#1254209ddf092cca25e8daaa1c63f3a67ac71da4"
+  dependencies:
+    debug "^4.3.1"
+    defaults-deep "^0.2.4"
+    handlebars "^4.7.7"
+    handlebars-helpers "https://github.com/acotty/handlebars-helpers/archive/refs/tags/0.11.0-beta.0.tar.gz"
+    lodash "^4.17.21"
+
 openapi-enforcer@^1.14.1:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/openapi-enforcer/-/openapi-enforcer-1.14.1.tgz#e79afed6287872617107508a8d02020a410d972d"
@@ -6425,16 +6435,6 @@ sver-compat@^1.5.0:
   dependencies:
     es6-iterator "^2.0.1"
     es6-symbol "^3.1.1"
-
-"swagger-codegen@https://github.com/acotty/swagger-codegen/releases/download/0.3.1-beta.4/swagger-codegen-v0.3.1-beta.4.tgz":
-  version "0.3.1-beta.4"
-  resolved "https://github.com/acotty/swagger-codegen/releases/download/0.3.1-beta.4/swagger-codegen-v0.3.1-beta.4.tgz#cc86d796a3d661db0386211107aef11b19840773"
-  dependencies:
-    debug "^4.3.1"
-    defaults-deep "^0.2.4"
-    handlebars "^4.7.7"
-    handlebars-helpers "https://github.com/acotty/handlebars-helpers/archive/refs/tags/0.11.0-beta.0.tar.gz"
-    lodash "^4.17.21"
 
 swagger-ui-dist@^3.18.1:
   version "3.48.0"

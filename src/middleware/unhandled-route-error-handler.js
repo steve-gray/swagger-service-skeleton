@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('swagger-service-skeleton:swagger-error-handler');
+const debug = require('debug')('openapi-service-skeleton:openapi-error-handler');
 
 module.exports = () =>
   (error, req, res) => {
